@@ -32,6 +32,7 @@ public abstract class EhActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //添加当前activity到栈中
         ((EhApplication) getApplication()).registerActivity(this);
     }
 
@@ -39,26 +40,27 @@ public abstract class EhActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        //从activity栈中去掉
         ((EhApplication) getApplication()).unregisterActivity(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        if (Settings.getEnableAnalytics()) {
-            EasyTracker.getInstance(this).activityStart(this);
-            mTrackStarted = true;
-        }
+        //开始检测
+//        if (Settings.getEnableAnalytics()) {
+//            EasyTracker.getInstance(this).activityStart(this);
+//            mTrackStarted = true;
+//        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        if (mTrackStarted) {
-            EasyTracker.getInstance(this).activityStop(this);
-            mTrackStarted = false;
-        }
+        //停止检测
+//        if (mTrackStarted) {
+//            EasyTracker.getInstance(this).activityStop(this);
+//            mTrackStarted = false;
+//        }
     }
 }

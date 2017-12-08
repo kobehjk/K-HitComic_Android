@@ -23,9 +23,9 @@ import okhttp3.Request;
 
 public class ChromeRequestBuilder extends Request.Builder {
 
-    private static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36";
-
+//    private static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+//            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.103 Safari/537.36";
+    private static final String CHROME_USER_AGENT = "Opera/9.80 (Android 6.1.0; Linux; Opera Mobi/build-1107180945; U; en-GB) Presto/2.8.149 Version/11.10";
     public ChromeRequestBuilder(String url) throws MalformedURLException {
         url(new URL(url));
         addHeader("User-Agent", CHROME_USER_AGENT);

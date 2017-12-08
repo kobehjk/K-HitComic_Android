@@ -21,6 +21,7 @@ import android.util.Log;
 
 import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.scene.Announcer;
 
@@ -50,24 +51,30 @@ public class SolidScene extends BaseScene {
                 }
             case CHECK_STEP_WARNING:
                 if (Settings.getAskAnalytics()) {
-                    startScene(new Announcer(AnalyticsScene.class).setArgs(args));
+                    Settings.putGallerySite(EhUrl.SITE_E);
+                    Settings.putNeedSignIn(false);
+                    Bundle newArgs = new Bundle();
+                    newArgs.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+                    startScene(new Announcer(GalleryListScene.class).setArgs(newArgs));
+//                    startScene(new Announcer(AnalyticsScene.class).setArgs(args));
                     break;
                 }
-            case CHECK_STEP_ANALYTICS:
-                if (Crash.hasCrashFile()) {
-                    startScene(new Announcer(CrashScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_CRASH:
-                if (EhUtils.needSignedIn(getContext2())) {
-                    startScene(new Announcer(SignInScene.class).setArgs(args));
-                    break;
-                }
-            case CHECK_STEP_SIGN_IN:
-                if (Settings.getSelectSite()) {
-                    startScene(new Announcer(SelectSiteScene.class).setArgs(args));
-                    break;
-                }
+
+//            case CHECK_STEP_ANALYTICS:
+//                if (Crash.hasCrashFile()) {
+//                    startScene(new Announcer(CrashScene.class).setArgs(args));
+//                    break;
+//                }
+//            case CHECK_STEP_CRASH:
+//                if (EhUtils.needSignedIn(getContext2())) {
+//                    startScene(new Announcer(SignInScene.class).setArgs(args));
+//                    break;
+//                }
+//            case CHECK_STEP_SIGN_IN:
+//                if (Settings.getSelectSite()) {
+//                    startScene(new Announcer(SelectSiteScene.class).setArgs(args));
+//                    break;
+//                }
             case CHECK_STEP_SELECT_SITE:
                 String targetScene = null;
                 Bundle targetArgs = null;
