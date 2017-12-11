@@ -111,7 +111,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     }
 
     private void init(Context context) {
-        setBackgroundResource(R.drawable.card_white_no_padding_2dp);
+//        setBackgroundResource(R.drawable.card_white_no_padding_2dp);
 
         mSearchDatabase = SearchDatabase.getInstance(getContext());
 
@@ -261,7 +261,7 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         if (v == mTitleTextView) {
-            mHelper.onClickTitle();
+//            mHelper.onClickTitle();
         } else if (v == mMenuButton) {
             mHelper.onClickLeftIcon();
         } else if (v == mActionButton) {
@@ -272,10 +272,10 @@ public class SearchBar extends FrameLayout implements View.OnClickListener,
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (v == mEditText) {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL) {
-                applySearch();
-                return true;
-            }
+//            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_NULL) {
+//                applySearch();
+//                return true;
+//            }
         }
         return false;
     }

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/EhViewer-1.0.24.iml" filepath="$PROJECT_DIR$/EhViewer-1.0.24.iml" />
       <module fileurl="file://$PROJECT_DIR$/K-HitComic_Android.iml" filepath="$PROJECT_DIR$/K-HitComic_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/daogenerator/daogenerator.iml" filepath="$PROJECT_DIR$/daogenerator/daogenerator.iml" />

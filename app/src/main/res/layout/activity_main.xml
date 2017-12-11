@@ -42,14 +42,14 @@
             app:headerLayout="@layout/nav_header_main"
             app:menu="@menu/nav_drawer_main"/>
 
-        <com.hippo.ehviewer.widget.EhDrawerView
-            android:id="@+id/right_drawer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:maxWidth="@dimen/drawer_max_width"
-            android:background="@color/background_light"
-            android:clickable="true"/>
+        <!--<com.hippo.ehviewer.widget.EhDrawerView-->
+            <!--android:id="@+id/right_drawer"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:maxWidth="@dimen/drawer_max_width"-->
+            <!--android:background="@color/background_light"-->
+            <!--android:clickable="true"/>-->
 
     </com.hippo.ehviewer.widget.EhDrawerLayout>
 </com.hippo.widget.SafeCoordinatorLayout>

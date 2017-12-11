@@ -311,7 +311,7 @@ public final class MainActivity extends StageActivity
 
         mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
-        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
+//        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
@@ -555,15 +555,31 @@ public final class MainActivity extends StageActivity
                     .setArgs(args));
         } else if (id == R.id.nav_whats_hot) {
             Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_WHATS_HOT);
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
+//            Bundle args = new Bundle();
+//            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_WHATS_HOT);
+//            startSceneFirstly(new Announcer(GalleryListScene.class)
+//                    .setArgs(args));
         } else if (id == R.id.nav_favourite) {
-            startScene(new Announcer(FavoritesScene.class));
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
+//            startScene(new Announcer(FavoritesScene.class));
         } else if (id == R.id.nav_history) {
-            startScene(new Announcer(HistoryScene.class));
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
+//            startScene(new Announcer(HistoryScene.class));
         } else if (id == R.id.nav_downloads) {
-            startScene(new Announcer(DownloadsScene.class));
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            startSceneFirstly(new Announcer(GalleryListScene.class)
+                    .setArgs(args));
+//            startScene(new Announcer(DownloadsScene.class));
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SETTINGS);
