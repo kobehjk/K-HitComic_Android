@@ -22,7 +22,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="@dimen/keyline_margin"
-    android:paddingBottom="@dimen/keyline_margin">
+    android:paddingBottom="@dimen/keyline_margin"
+    android:visibility="gone">
 
     <HorizontalScrollView
         android:layout_width="wrap_content"

@@ -437,6 +437,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mTitle = (TextView) ViewUtils.$$(mHeader, R.id.title);
         mUploader = (TextView) ViewUtils.$$(mHeader, R.id.uploader);
         mCategory = (TextView) ViewUtils.$$(mHeader, R.id.category);
+        //右上角菜單鍵
         mOtherActions = (ImageView) ViewUtils.$$(mHeader, R.id.other_actions);
         mActionGroup = (ViewGroup) ViewUtils.$$(mHeader, R.id.action_card);
         mDownload = (TextView) ViewUtils.$$(mActionGroup, R.id.download);
@@ -444,11 +445,11 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         Ripple.addRipple(mOtherActions, false);
         Ripple.addRipple(mDownload, false);
         Ripple.addRipple(mRead, false);
-        mUploader.setOnClickListener(this);
-        mCategory.setOnClickListener(this);
+//        mUploader.setOnClickListener(this);
+//        mCategory.setOnClickListener(this);
         mOtherActions.setOnClickListener(this);
-        mDownload.setOnClickListener(this);
-        mDownload.setOnLongClickListener(this);
+//        mDownload.setOnClickListener(this);
+//        mDownload.setOnLongClickListener(this);
         mRead.setOnClickListener(this);
 
         mUploader.setOnLongClickListener(this);
@@ -463,7 +464,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         mPosted = (TextView) ViewUtils.$$(mInfo, R.id.posted);
         mFavoredTimes = (TextView) ViewUtils.$$(mInfo, R.id.favoredTimes);
         Ripple.addRipple(mInfo, false);
-        mInfo.setOnClickListener(this);
+//        mInfo.setOnClickListener(this);
 
         mActions = ViewUtils.$$(belowHeader, R.id.actions);
         mRatingText = (TextView) ViewUtils.$$(mActions, R.id.rating_text);

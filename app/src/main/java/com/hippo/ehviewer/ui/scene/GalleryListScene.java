@@ -739,6 +739,7 @@ public final class GalleryListScene extends BaseScene
         }
     }
 
+    /*列表项目点击*/
     @Override
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         if (null == mHelper || null == mRecyclerView) {

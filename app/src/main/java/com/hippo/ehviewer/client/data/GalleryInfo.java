@@ -98,6 +98,7 @@ public class GalleryInfo implements Parcelable {
     public int spanIndex;
     public int spanGroupIndex;
 
+
     /**
      * language from title
      */

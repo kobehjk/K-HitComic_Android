@@ -23,7 +23,8 @@
     android:orientation="vertical"
     android:padding="@dimen/keyline_margin"
     android:divider="@drawable/spacer_keyline"
-    android:showDividers="middle">
+    android:showDividers="middle"
+    android:visibility="gone">
 
     <com.hippo.widget.SimpleGridAutoSpanLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"

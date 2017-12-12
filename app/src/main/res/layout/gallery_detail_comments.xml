@@ -22,7 +22,8 @@
     android:orientation="vertical"
     android:padding="@dimen/keyline_margin"
     android:divider="@drawable/spacer_keyline"
-    android:showDividers="middle">
+    android:showDividers="middle"
+    android:visibility="gone">
 
     <TextView
         android:id="@+id/comments_text"

@@ -441,7 +441,7 @@ public class Settings {
     }
 
     private static final String KEY_READING_DIRECTION = "reading_direction";
-    private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_RIGHT_TO_LEFT;
+    private static final int DEFAULT_READING_DIRECTION = GalleryView.LAYOUT_LEFT_TO_RIGHT;
 
     @GalleryView.LayoutMode
     public static int getReadingDirection() {
