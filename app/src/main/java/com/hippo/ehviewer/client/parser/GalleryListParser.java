@@ -185,7 +185,7 @@ public class GalleryListParser {
     public static Result parse(@NonNull String body) throws Exception {
         Result result = new Result();
         Document d = Jsoup.parse(body);
-
+//        Document d = Jsoup.pa  parse(new URL(url).openStream(), "GBK", url);
         try {
             result.pages = parsePages(d, body);
         } catch (ParseException e) {
@@ -215,4 +215,146 @@ public class GalleryListParser {
 
         return result;
     }
+
+    public static Result lifanParse(@NonNull String body) throws Exception {
+        Result result = new Result();
+        Document d = Jsoup.parse(body);
+
+        try {
+            result.pages = lifanParsePages(d, body);
+        } catch (ParseException e) {
+            if (body.contains("No hits found</p>")) {
+                result.pages = 0;
+                //noinspection unchecked
+                result.galleryInfoList = Collections.EMPTY_LIST;
+                return result;
+            } else {
+                throw e;
+            }
+        }
+
+        try {
+            Elements es = d.getElementsByClass("itg").first().child(0).children();
+            List<GalleryInfo> list = new ArrayList<>(es.size() - 1);
+            for (int i = 1; i < es.size(); i++) { // First one is table header, skip it
+                GalleryInfo gi = parseGalleryInfo(es.get(i));
+                if (null != gi) {
+                    list.add(gi);
+                }
+            }
+            result.galleryInfoList = list;
+        } catch (Exception e) {
+            throw new ParseException("Can't parse gallery list", body);
+        }
+
+        return result;
+    }
+
+    private static int lifanParsePages(Document d, String body) throws ParseException {
+        try {
+            String page = d.getElementsByClass("pageinfo").select("strong").first().text();
+            return Integer.parseInt(page.trim());
+        } catch (Exception e) {
+            throw new ParseException("Can't parse gallery list pages", body);
+        }
+    }
+
+    @Nullable
+    private static GalleryInfo lifanParseGalleryInfo(Element e) {
+        GalleryInfo gi = new GalleryInfo();
+        // Get category
+        Element ic = JsoupUtils.getElementByClass(e, "ic");
+        if (null != ic) {
+            gi.category = EhUtils.getCategory(ic.attr("alt").trim());
+        } else {
+            Log.w(TAG, "Can't parse gallery info category");
+            gi.category = EhUtils.UNKNOWN;
+        }
+        // Posted
+        Element itd = JsoupUtils.getElementByClass(e, "itd");
+        if (null != itd) {
+            gi.posted = itd.text().trim();
+        } else {
+            Log.w(TAG, "Can't parse gallery info posted");
+            gi.posted = "";
+        }
+        // Thumb
+        Element it2 = JsoupUtils.getElementByClass(e, "it2");
+        if (null != it2) {
+            // Thumb size
+            Matcher m = PATTERN_THUMB_SIZE.matcher(it2.attr("style"));
+            if (m.find()) {
+                gi.thumbWidth = NumberUtils.parseIntSafely(m.group(2), 0);
+                gi.thumbHeight = NumberUtils.parseIntSafely(m.group(1), 0);
+            } else {
+                Log.w(TAG, "Can't parse gallery info thumb size");
+                gi.thumbWidth = 0;
+                gi.thumbHeight = 0;
+            }
+
+            // Thumb url
+            Elements es = it2.children();
+            if (null != es && es.size() >= 1) {
+                gi.thumb = EhUtils.handleThumbUrlResolution(es.get(0).attr("src"));
+            } else {
+                String html = it2.html();
+                int index1 = html.indexOf('~');
+                int index2 = StringUtils.ordinalIndexOf(html, '~', 2);
+                if (index1 < index2) {
+                    gi.thumb = EhUtils.handleThumbUrlResolution(
+                            "http://" +StringUtils.replace(html.substring(index1 + 1, index2), "~", "/"));
+                } else {
+                    Log.w(TAG, "Can't parse gallery info thumb url");
+                    gi.thumb = "";
+                }
+            }
+        } else {
+            Log.w(TAG, "Can't parse gallery info thumb");
+            gi.thumbWidth = 0;
+            gi.thumbHeight = 0;
+            gi.thumb = "";
+        }
+        // Title (required)
+        Element it5 = JsoupUtils.getElementByClass(e, "it5");
+        if (null == it5) {
+            Log.e(TAG, "Can't parse gallery info title, step 1");
+            return null;
+        }
+        Elements es = it5.children();
+        if (null == es || es.size() <= 0) {
+            Log.e(TAG, "Can't parse gallery info title, step 2");
+            return null;
+        }
+        Element a = es.get(0);
+        GalleryDetailUrlParser.Result result = GalleryDetailUrlParser.parse(a.attr("href"));
+        if (null == result) {
+            Log.e(TAG, "Can't parse gallery info title, step 3");
+            return null;
+        }
+        gi.gid = result.gid;
+        gi.token = result.token;
+        gi.title = a.text().trim();
+        // Rating
+        Element it4r = JsoupUtils.getElementByClass(e, "it4r");
+        if (null != it4r) {
+            gi.rating = NumberUtils.parseFloatSafely(parseRating(it4r.attr("style")), -1.0f);
+        } else {
+            Log.w(TAG, "Can't parse gallery info rating");
+            gi.rating = -1.0f;
+        }
+        // Uploader
+        Element itu = JsoupUtils.getElementByClass(e, "itu");
+        if (null != itu) {
+            gi.uploader = itu.text().trim();
+        } else {
+            Log.w(TAG, "Can't parse gallery info uploader");
+            gi.uploader = "";
+        }
+
+        gi.generateSLang();
+
+        return gi;
+    }
+
+
 }
