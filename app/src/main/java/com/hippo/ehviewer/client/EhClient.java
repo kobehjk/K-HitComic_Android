@@ -61,6 +61,7 @@ public class EhClient {
     public static final int METHOD_IMAGE_SEARCH = 16;
     public static final int METHOD_ARCHIVE_LIST = 17;
     public static final int METHOD_DOWNLOAD_ARCHIVE = 18;
+    public static final int METHOD_GET_LIFAN_GALLERY_LIST = 19;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -147,6 +148,10 @@ public class EhClient {
             }
         }
 
+        /*
+        * 各种请求的分配处
+        *
+        * */
         @Override
         @SuppressWarnings("unchecked")
         protected Object doInBackground(Object... params) {
@@ -156,6 +161,8 @@ public class EhClient {
                         return EhEngine.signIn(this, mOkHttpClient, (String) params[0], (String) params[1]);
                     case METHOD_GET_GALLERY_LIST:
                         return EhEngine.getGalleryList(this, mOkHttpClient, (String) params[0]);
+                    case METHOD_GET_LIFAN_GALLERY_LIST:
+                        return EhEngine.getGalleryListLiFan(this, mOkHttpClient, (String) params[0]);
                     case METHOD_FILL_GALLERY_LIST_BY_API:
                         return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:

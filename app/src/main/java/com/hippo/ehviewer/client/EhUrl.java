@@ -32,7 +32,7 @@ public class EhUrl {
     public static final int SITE_EX = 1;
 
 //    public static final String DOMAIN_EX = "exhentai.org";
-    public static final String DOMAIN_EX = "m.lifanacg.com";
+    public static final String DOMAIN_EX = "e-hentai.org";
     public static final String DOMAIN_E = "e-hentai.org";
     public static final String DOMAIN_LOFI = "lofi.e-hentai.org";
 

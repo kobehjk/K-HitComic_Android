@@ -143,23 +143,26 @@ public final class MainActivity extends StageActivity
     @Nullable
     @Override
     protected Announcer getLaunchAnnouncer() {
-        if (!TextUtils.isEmpty(Settings.getSecurity())) {
-            return new Announcer(SecurityScene.class);
-        } else if (Settings.getShowWarning()) {
-            return new Announcer(WarningScene.class);
-        } else if (Settings.getAskAnalytics()) {
-            return new Announcer(AnalyticsScene.class);
-        } else if (Crash.hasCrashFile()) {
-            return new Announcer(CrashScene.class);
-        } else if (EhUtils.needSignedIn(this)) {
-            return new Announcer(SignInScene.class);
-        } else if (Settings.getSelectSite()) {
-            return new Announcer(SelectSiteScene.class);
-        } else {
-            Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
-            return new Announcer(GalleryListScene.class).setArgs(args);
-        }
+//        if (!TextUtils.isEmpty(Settings.getSecurity())) {
+//            return new Announcer(SecurityScene.class);
+//        } else if (Settings.getShowWarning()) {
+//            return new Announcer(WarningScene.class);
+//        } else if (Settings.getAskAnalytics()) {
+//            return new Announcer(AnalyticsScene.class);
+//        } else if (Crash.hasCrashFile()) {
+//            return new Announcer(CrashScene.class);
+//        } else if (EhUtils.needSignedIn(this)) {
+//            return new Announcer(SignInScene.class);
+//        } else if (Settings.getSelectSite()) {
+//            return new Announcer(SelectSiteScene.class);
+//        } else {
+//            Bundle args = new Bundle();
+//            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+//            return new Announcer(GalleryListScene.class).setArgs(args);
+//        }
+        Bundle args = new Bundle();
+        args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_LIFAN);
+        return new Announcer(GalleryListScene.class).setArgs(args);
     }
 
     // Sometimes scene can't show directly

@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.dao.QuickSearch;
 import com.hippo.ehviewer.widget.AdvanceSearchTable;
 import com.hippo.network.UrlBuilder;
@@ -38,7 +39,7 @@ import java.net.URLEncoder;
 
 public class ListUrlBuilder implements Cloneable, Parcelable {
 
-    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH})
+    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH, MODE_LIFAN})
     @Retention(RetentionPolicy.SOURCE)
     private @interface Mode {}
 
@@ -48,6 +49,7 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public static final int MODE_TAG = 0x2;
     public static final int MODE_WHATS_HOT = 0x3;
     public static final int MODE_IMAGE_SEARCH = 0x4;
+    public static final int MODE_LIFAN = 0x5;
 
     public static final int DEFAULT_ADVANCE = AdvanceSearchTable.SNAME | AdvanceSearchTable.STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
@@ -466,6 +468,8 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             }
             case MODE_IMAGE_SEARCH:
                 return EhUrl.getImageSearchUrl();
+            case MODE_LIFAN:
+                return KJUrl.liFanShaoNv;
         }
     }
 

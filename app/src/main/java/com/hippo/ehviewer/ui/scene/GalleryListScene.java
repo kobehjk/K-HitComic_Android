@@ -118,6 +118,7 @@ public final class GalleryListScene extends BaseScene
     public final static String ACTION_HOMEPAGE = "action_homepage";
     public final static String ACTION_WHATS_HOT = "action_whats_hot";
     public final static String ACTION_LIST_URL_BUILDER = "action_list_url_builder";
+    public final static String ACTION_LIFAN = "action_lifan";
 
     public final static String KEY_LIST_URL_BUILDER = "list_url_builder";
     public final static String KEY_HAS_FIRST_REFRESH = "has_first_refresh";
@@ -229,6 +230,8 @@ public final class GalleryListScene extends BaseScene
         String action = args.getString(KEY_ACTION);
         if (ACTION_HOMEPAGE.equals(action)) {
             mUrlBuilder.reset();
+        } else if (ACTION_LIFAN.equals(action)) {
+            mUrlBuilder.setMode(ListUrlBuilder.MODE_LIFAN);
         } else if (ACTION_WHATS_HOT.equals(action)) {
             mUrlBuilder.setMode(ListUrlBuilder.MODE_WHATS_HOT);
         } else if (ACTION_LIST_URL_BUILDER.equals(action)) {
@@ -1309,7 +1312,15 @@ public final class GalleryListScene extends BaseScene
                         mUrlBuilder.isUseSimilarityScan(),
                         mUrlBuilder.isOnlySearchCovers(), mUrlBuilder.isShowExpunged());
                 mClient.execute(request);
-            } else {
+            } else if (ListUrlBuilder.MODE_LIFAN == mUrlBuilder.getMode()) {
+                String url = mUrlBuilder.build();
+                EhRequest request = new EhRequest();
+                request.setMethod(EhClient.METHOD_GET_LIFAN_GALLERY_LIST);
+                request.setCallback(new GetGalleryLiFanListListener(getContext(),
+                        activity.getStageId(), getTag(), taskId));
+                request.setArgs(url);
+                mClient.execute(request);
+            }else {
                 String url = mUrlBuilder.build();
                 EhRequest request = new EhRequest();
                 request.setMethod(EhClient.METHOD_GET_GALLERY_LIST);
@@ -1434,6 +1445,40 @@ public final class GalleryListScene extends BaseScene
         private final int mTaskId;
 
         public GetGalleryListListener(Context context, int stageId, String sceneTag, int taskId) {
+            super(context, stageId, sceneTag);
+            mTaskId = taskId;
+        }
+
+        @Override
+        public void onSuccess(GalleryListParser.Result result) {
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetGalleryListSuccess(result, mTaskId);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            GalleryListScene scene = getScene();
+            if (scene != null) {
+                scene.onGetGalleryListFailure(e, mTaskId);
+            }
+        }
+
+        @Override
+        public void onCancel() {}
+
+        @Override
+        public boolean isInstance(SceneFragment scene) {
+            return scene instanceof GalleryListScene;
+        }
+    }
+
+    private static class GetGalleryLiFanListListener extends EhCallback<GalleryListScene, GalleryListParser.Result> {
+
+        private final int mTaskId;
+
+        public GetGalleryLiFanListListener(Context context, int stageId, String sceneTag, int taskId) {
             super(context, stageId, sceneTag);
             mTaskId = taskId;
         }

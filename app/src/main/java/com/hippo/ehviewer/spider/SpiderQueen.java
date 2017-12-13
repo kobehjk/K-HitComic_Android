@@ -709,6 +709,10 @@ public final class SpiderQueen implements Runnable {
         return null;
     }
 
+
+    /*
+    * kobehjk 预读page
+    * */
     private void readPreviews(String body, int index, SpiderInfo spiderInfo) throws ParseException {
         spiderInfo.pages = GalleryDetailParser.parsePages(body);
         spiderInfo.previewPages = GalleryDetailParser.parsePreviewPages(body);
@@ -729,6 +733,10 @@ public final class SpiderQueen implements Runnable {
         }
     }
 
+
+    /*
+    * kobehjk - 获取spider信息
+    * */
     private SpiderInfo readSpiderInfoFromInternet(EhConfig config) {
         try {
             SpiderInfo spiderInfo = new SpiderInfo();
@@ -749,6 +757,9 @@ public final class SpiderQueen implements Runnable {
         }
     }
 
+    /*
+    * kobehjk - 获取该页的pic token
+    * */
     private String getPTokenFromInternet(int index, EhConfig config) {
         SpiderInfo spiderInfo = mSpiderInfo.get();
         if (spiderInfo == null) {
@@ -1101,7 +1112,7 @@ public final class SpiderQueen implements Runnable {
                 if (DEBUG_LOG) {
                     Log.d(TAG, imageUrl);
                 }
-
+//                imageUrl = "http://pm.weakcn.com/lifanacgup/lifanacg/20171207/4/000.jpg";
                 // Download image
                 OutputStreamPipe pipe = null;
                 InputStream is = null;

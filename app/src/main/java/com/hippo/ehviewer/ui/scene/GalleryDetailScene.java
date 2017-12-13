@@ -248,6 +248,8 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
     private GalleryInfo mGalleryInfo;
     private long mGid;
     private String mToken;
+    private String type;
+    private String hrefString;
 
     @Nullable
     private GalleryDetail mGalleryDetail;
@@ -512,21 +514,23 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mViewTransition2 = new ViewTransition(mBelowHeader, mProgress);
 
-        if (prepareData()) {
-            if (mGalleryDetail != null) {
-                bindViewSecond();
-                setTransitionName();
-                adjustViewVisibility(STATE_NORMAL, false);
-            } else if (mGalleryInfo != null) {
-                bindViewFirst();
-                setTransitionName();
-                adjustViewVisibility(STATE_REFRESH_HEADER, false);
+        if (mGalleryInfo.type != "lifan"){
+            if (prepareData()) {
+                if (mGalleryDetail != null) {
+                    bindViewSecond();
+                    setTransitionName();
+                    adjustViewVisibility(STATE_NORMAL, false);
+                } else if (mGalleryInfo != null) {
+                    bindViewFirst();
+                    setTransitionName();
+                    adjustViewVisibility(STATE_REFRESH_HEADER, false);
+                } else {
+                    adjustViewVisibility(STATE_REFRESH, false);
+                }
             } else {
-                adjustViewVisibility(STATE_REFRESH, false);
+                mTip.setText(R.string.error_cannot_find_gallery);
+                adjustViewVisibility(STATE_FAILED, false);
             }
-        } else {
-            mTip.setText(R.string.error_cannot_find_gallery);
-            adjustViewVisibility(STATE_FAILED, false);
         }
 
         EhApplication.getDownloadManager(context).addDownloadInfoListener(this);

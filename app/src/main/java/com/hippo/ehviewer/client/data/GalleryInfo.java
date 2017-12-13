@@ -98,6 +98,12 @@ public class GalleryInfo implements Parcelable {
     public int spanIndex;
     public int spanGroupIndex;
 
+/*
+* 针对lifan的属性
+* */
+    public String detailHref;
+    public String type;
+//    public String detailHref;
 
     /**
      * language from title

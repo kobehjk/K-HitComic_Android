@@ -46,6 +46,23 @@ public final class GalleryPageUrlParser {
         }
     }
 
+    public static Result parseLiFan(String url) {
+        if (url == null) {
+            return null;
+        }
+
+        Matcher m = URL_PATTERN.matcher(url);
+        if (m.find()) {
+            Result result = new Result();
+            result.gid = Long.parseLong(m.group(2));
+            result.pToken = m.group(1);
+            result.page = Integer.parseInt(m.group(3)) - 1;
+            return result;
+        } else {
+            return null;
+        }
+    }
+
     public static class Result {
         public long gid;
         public String pToken;

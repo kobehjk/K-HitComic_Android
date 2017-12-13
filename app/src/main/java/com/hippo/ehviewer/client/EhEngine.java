@@ -160,7 +160,7 @@ public class EhEngine {
     public static GalleryListParser.Result getGalleryList(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(KJUrl.liFanShaoNv, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -180,6 +180,70 @@ public class EhEngine {
 //            Document doc = Jsoup.parse(new URL(KJUrl.liFanShaoNv).openStream(), "GBK", url);
             //kobehjk 解析doc
             result = GalleryListParser.parse(body);
+        } catch (Exception e) {
+            throwException(call, code, headers, body, e);
+            throw e;
+        }
+
+        // Filter title and uploader
+        List<GalleryInfo> list = result.galleryInfoList;
+        for (int i = 0, n = list.size(); i < n; i++) {
+            GalleryInfo info = list.get(i);
+            if (!sEhFilter.filterTitle(info) || !sEhFilter.filterUploader(info)) {
+                list.remove(i);
+                i--;
+                n--;
+            }
+        }
+
+        if (list.size() > 0 && (Settings.getShowJpnTitle() || sEhFilter.needCallApi())) {
+            // Fill by api
+            fillGalleryListByApi(task, okHttpClient, list);
+
+            // Filter tag
+            for (int i = 0, n = list.size(); i < n; i++) {
+                GalleryInfo info = list.get(i);
+                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
+                    list.remove(i);
+                    i--;
+                    n--;
+                }
+            }
+        }
+
+        for (GalleryInfo info : list) {
+            info.thumb = EhUrl.getFixedPreviewThumbUrl(info.thumb);
+        }
+
+        return result;
+    }
+
+    /*
+    * kobehjk 获取lifan列表
+    * */
+    public static GalleryListParser.Result getGalleryListLiFan(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
+                                                          String url) throws Exception {
+        Log.d(TAG, url);
+        Request request = new EhRequestBuilder(KJUrl.liFanShaoNv, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Call call = okHttpClient.newCall(request);
+
+        // Put call
+        if (null != task) {
+            task.setCall(call);
+        }
+
+        String body = null;
+        Headers headers = null;
+        GalleryListParser.Result result;
+        int code = -1;
+        try {
+            Response response = call.execute();
+            code = response.code();
+            headers = response.headers();
+            body = response.body().string();
+            Document doc = Jsoup.parse(new URL(KJUrl.liFanShaoNv).openStream(), "GBK", url);
+            //kobehjk 解析doc
+            result = GalleryListParser.lifanParse(doc);
         } catch (Exception e) {
             throwException(call, code, headers, body, e);
             throw e;
