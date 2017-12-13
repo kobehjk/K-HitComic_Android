@@ -33,12 +33,20 @@ public class EhGalleryProvider extends GalleryProvider2 implements SpiderQueen.O
 
     private final Context mContext;
     private final GalleryInfo mGalleryInfo;
+    private final String mType;
     @Nullable
     private SpiderQueen mSpiderQueen;
 
     public EhGalleryProvider(Context context, GalleryInfo galleryInfo) {
         mContext = context;
         mGalleryInfo = galleryInfo;
+        mType = "";
+    }
+
+    public EhGalleryProvider(Context context, GalleryInfo galleryInfo, String type) {
+        mContext = context;
+        mGalleryInfo = galleryInfo;
+        mType = type;
     }
 
     @Override

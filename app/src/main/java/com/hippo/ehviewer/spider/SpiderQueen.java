@@ -671,6 +671,9 @@ public final class SpiderQueen implements Runnable {
         }
     }
 
+    /*
+    * kobehjk - 从本地或者内存中获取SpiderInfo
+    * */
     private synchronized SpiderInfo readSpiderInfoFromLocal() {
         SpiderInfo spiderInfo = mSpiderInfo.get();
         if (spiderInfo != null) {

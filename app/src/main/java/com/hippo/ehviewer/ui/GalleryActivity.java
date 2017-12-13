@@ -51,6 +51,7 @@ import android.widget.Toast;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
 import com.hippo.ehviewer.gallery.EhGalleryProvider;
@@ -82,6 +83,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     public static final String ACTION_DIR = "dir";
     public static final String ACTION_ZIP = "zip";
     public static final String ACTION_EH = "eh";
+    public static final String ACTION_LIFAN = "lifan";
 
     public static final String KEY_ACTION = "action";
     public static final String KEY_FILENAME = "filename";
@@ -188,6 +190,10 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         } else if (ACTION_EH.equals(mAction)) {
             if (mGalleryInfo != null) {
                 mGalleryProvider = new EhGalleryProvider(this, mGalleryInfo);
+            }
+        } else if (ACTION_LIFAN.equals(mAction)) {
+            if (mGalleryInfo != null) {
+                mGalleryProvider = new EhGalleryProvider(this, mGalleryInfo, KJUrl.LIFANTYPE);
             }
         } else if (Intent.ACTION_VIEW.equals(mAction)) {
             if (mUri != null) {

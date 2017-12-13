@@ -40,13 +40,13 @@ public class SpiderInfo {
 
     static final String TOKEN_FAILED = "failed";
 
-    public int startPage = 0;
+    public int startPage = 0;//开始页码
     public long gid = -1;
     public String token = null;
-    public int pages = -1;
-    public int previewPages = -1;
-    public int previewPerPage = -1;
-    public SparseArray<String> pTokenMap = null;
+    public int pages = -1;//总页数
+    public int previewPages = -1;//预缓存页数
+    public int previewPerPage = -1;//预缓存页码
+    public SparseArray<String> pTokenMap = null;//所有页的token
 
     public static SpiderInfo read(@Nullable UniFile file) {
         if (file == null) {

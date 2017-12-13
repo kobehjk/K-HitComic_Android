@@ -12,4 +12,7 @@ public class KJUrl {
     public static final String liFanDongTai = "http://m.lifanacg.com/dongtai/";
 
     public static final String testContent = "http://m.lifanacg.com/shaonv/2017/1129/5046.html";
+
+
+    public static final String LIFANTYPE = "shaonv";
 }

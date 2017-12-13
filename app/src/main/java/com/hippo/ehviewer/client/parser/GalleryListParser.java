@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.exception.ParseException;
 import com.hippo.util.JsoupUtils;
@@ -278,7 +279,7 @@ public class GalleryListParser {
         gi.thumbHeight = 180;
         gi.thumb = e.select("img").attr("src");
         gi.detailHref = e.select("a.abc1").attr("href");
-        gi.type = "lifan";
+        gi.type = KJUrl.LIFANTYPE;
         // Title (required)
 
         String regEx="[^0-9]";

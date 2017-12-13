@@ -68,6 +68,7 @@ import com.hippo.ehviewer.client.EhFilter;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.client.data.GalleryComment;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
@@ -514,7 +515,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mViewTransition2 = new ViewTransition(mBelowHeader, mProgress);
 
-        if (mGalleryInfo.type != "lifan"){
+        if (mGalleryInfo.type == null || (! mGalleryInfo.type.equals(KJUrl.LIFANTYPE)) ){
             if (prepareData()) {
                 if (mGalleryDetail != null) {
                     bindViewSecond();
@@ -1139,8 +1140,13 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             }
             if (galleryInfo != null) {
                 Intent intent = new Intent(activity, GalleryActivity.class);
-                intent.setAction(GalleryActivity.ACTION_EH);
+
                 intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
+                if (galleryInfo.type != null && galleryInfo.type.equals(KJUrl.LIFANTYPE) ){
+                    intent.setAction(GalleryActivity.ACTION_LIFAN);
+                }else {
+                    intent.setAction(GalleryActivity.ACTION_EH);
+                }
                 startActivity(intent);
             }
         } else if (mInfo == v) {
