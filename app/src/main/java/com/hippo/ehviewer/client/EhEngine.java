@@ -342,27 +342,35 @@ public class EhEngine {
     public static GalleryDetail getGalleryDetail(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
             String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
-        Call call = okHttpClient.newCall(request);
 
-        // Put call
-        if (null != task) {
-            task.setCall(call);
+        if (url.contains("lifan")){
+
+            return GalleryDetailParser.parseLifan(Jsoup.parse(new URL(url).openStream(), "GBK", url).toString(),url);
+        }else {
+            Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+            Call call = okHttpClient.newCall(request);
+
+            // Put call
+            if (null != task) {
+                task.setCall(call);
+            }
+
+            String body = null;
+            Headers headers = null;
+            int code = -1;
+            try {
+                Response response = call.execute();
+                code = response.code();
+                headers = response.headers();
+                body = response.body().string();
+                return GalleryDetailParser.parse(body);
+            } catch (Exception e) {
+                throwException(call, code, headers, body, e);
+                throw e;
+            }
         }
 
-        String body = null;
-        Headers headers = null;
-        int code = -1;
-        try {
-            Response response = call.execute();
-            code = response.code();
-            headers = response.headers();
-            body = response.body().string();
-            return GalleryDetailParser.parse(body);
-        } catch (Exception e) {
-            throwException(call, code, headers, body, e);
-            throw e;
-        }
+
     }
 
 

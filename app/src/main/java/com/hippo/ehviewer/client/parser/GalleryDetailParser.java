@@ -82,6 +82,29 @@ public class GalleryDetailParser {
     private static final String PINING_STRING =
             "<p>This gallery is pining for the fjords.</p>";
 
+    public static GalleryDetail parseLifan(String body,String url) throws EhException {
+
+
+        GalleryDetail galleryDetail = new GalleryDetail();
+        Document document = Jsoup.parse(body);
+        String page = document.getElementsByClass("page11lf").first().select("a").first().text();
+        page = page.substring(1,page.length()-2);
+        galleryDetail.pages = NumberUtils.parseIntSafely(page,0);
+        Elements imgs = document.select("div#img33String");
+        String imgurl = imgs.first().select("img").attr("src");
+        galleryDetail.pageSrcUrl = imgurl.substring(0,imgurl.length() - 7);
+
+        galleryDetail.size = ""+galleryDetail.pages*300/1024+"M";
+        List<GalleryTagGroup> list = new ArrayList<>();
+        galleryDetail.tags = list.toArray(new GalleryTagGroup[list.size()]);
+        List<GalleryTagGroup> listComment = new ArrayList<>();
+        galleryDetail.comments = listComment.toArray(new GalleryComment[listComment.size()]);
+        galleryDetail.previewPages = 0;
+        galleryDetail.previewSet = new LargePreviewSet();
+
+        return galleryDetail;
+    }
+
     public static GalleryDetail parse(String body) throws EhException {
         if (body.contains(OFFENSIVE_STRING)) {
             throw new OffensiveException();
@@ -100,6 +123,7 @@ public class GalleryDetailParser {
         GalleryDetail galleryDetail = new GalleryDetail();
         Document document = Jsoup.parse(body);
         parseDetail(galleryDetail, document, body);
+
         galleryDetail.tags = parseTagGroups(document);
         galleryDetail.comments = parseComments(document);
         galleryDetail.previewPages = parsePreviewPages(document, body);

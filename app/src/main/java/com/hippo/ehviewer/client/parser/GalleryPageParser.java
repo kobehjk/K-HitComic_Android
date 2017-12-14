@@ -53,6 +53,29 @@ public class GalleryPageParser {
         }
     }
 
+    public static Result parseLiFan(String body) throws ParseException {
+        Matcher m;
+        Result result = new Result();
+        m = PATTERN_IMAGE_URL.matcher(body);
+        if (m.find()) {
+            result.imageUrl = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
+        }
+        m = PATTERN_SKIP_HATH_KEY.matcher(body);
+        if (m.find()) {
+            result.skipHathKey = StringUtils.unescapeXml(StringUtils.trim(m.group(1)));
+        }
+        m = PATTERN_ORIGIN_IMAGE_URL.matcher(body);
+        if (m.find()) {
+            result.originImageUrl = StringUtils.unescapeXml(m.group(1)) + "fullimg.php" + StringUtils.unescapeXml(m.group(2));
+        }
+
+        if (!TextUtils.isEmpty(result.imageUrl)) {
+            return result;
+        } else {
+            throw new ParseException("Parse image url and skip hath key error", body);
+        }
+    }
+
     public static class Result {
         public String imageUrl;
         public String skipHathKey;

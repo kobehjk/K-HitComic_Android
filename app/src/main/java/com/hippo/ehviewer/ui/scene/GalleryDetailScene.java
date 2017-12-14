@@ -515,7 +515,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
 
         mViewTransition2 = new ViewTransition(mBelowHeader, mProgress);
 
-        if (mGalleryInfo.type == null || (! mGalleryInfo.type.equals(KJUrl.LIFANTYPE)) ){
+//        if (mGalleryInfo.type == null || (! mGalleryInfo.type.equals(KJUrl.LIFANTYPE)) ){
             if (prepareData()) {
                 if (mGalleryDetail != null) {
                     bindViewSecond();
@@ -532,7 +532,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 mTip.setText(R.string.error_cannot_find_gallery);
                 adjustViewVisibility(STATE_FAILED, false);
             }
-        }
+//        }
 
         EhApplication.getDownloadManager(context).addDownloadInfoListener(this);
 
@@ -637,6 +637,9 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         Context context = getContext2();
         MainActivity activity = getActivity2();
         String url = getGalleryDetailUrl(false);
+        if (mGalleryInfo.type != null && mGalleryInfo.type.equals(KJUrl.LIFANTYPE)){
+            url = KJUrl.liFanHost + mGalleryInfo.detailHref;
+        }
         if (null == context || null == activity || null == url) {
             return false;
         }
@@ -644,6 +647,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         EhClient.Callback callback = new GetGalleryDetailListener(context,
                 activity.getStageId(), getTag());
         mRequestId = ((EhApplication) context.getApplicationContext()).putGlobalStuff(callback);
+
         EhRequest request = new EhRequest()
                 .setMethod(EhClient.METHOD_GET_GALLERY_DETAIL)
                 .setArgs(url)
@@ -651,6 +655,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
         EhApplication.getEhClient(context).execute(request);
 
         return true;
+
     }
 
     private void setActionDrawable(TextView text, Drawable drawable) {

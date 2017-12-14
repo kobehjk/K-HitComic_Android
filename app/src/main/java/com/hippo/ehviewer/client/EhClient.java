@@ -62,6 +62,7 @@ public class EhClient {
     public static final int METHOD_ARCHIVE_LIST = 17;
     public static final int METHOD_DOWNLOAD_ARCHIVE = 18;
     public static final int METHOD_GET_LIFAN_GALLERY_LIST = 19;
+    public static final int METHOD_GET_LIFAN_GALLERY_DETAIL = 20;
 
     private final ThreadPoolExecutor mRequestThreadPool;
     private final OkHttpClient mOkHttpClient;
@@ -166,6 +167,8 @@ public class EhClient {
                     case METHOD_FILL_GALLERY_LIST_BY_API:
                         return EhEngine.fillGalleryListByApi(this, mOkHttpClient, (List<GalleryInfo>) params[0]);
                     case METHOD_GET_GALLERY_DETAIL:
+                        return EhEngine.getGalleryDetail(this, mOkHttpClient, (String) params[0]);
+                    case METHOD_GET_LIFAN_GALLERY_DETAIL:
                         return EhEngine.getGalleryDetail(this, mOkHttpClient, (String) params[0]);
                     case METHOD_GET_PREVIEW_SET:
                         return EhEngine.getPreviewSet(this, mOkHttpClient, (String) params[0]);

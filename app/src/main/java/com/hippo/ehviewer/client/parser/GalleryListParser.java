@@ -219,7 +219,6 @@ public class GalleryListParser {
 
     public static Result lifanParse(@NonNull Document d) throws Exception {
         Result result = new Result();
-//        Document d = Jsoup.parse(body);
 
         try {
             result.pages = lifanParsePages(d, d.toString());
@@ -238,8 +237,7 @@ public class GalleryListParser {
             Elements elements = d.select("ul.abc2");
             Elements todayHots = elements.first().select("li");
             List<GalleryInfo> list = new ArrayList<>(todayHots.size());
-//            Elements es = d.getElementsByClass("itg").first().child(0).children();
-//            List<GalleryInfo> list = new ArrayList<>(es.size() - 1);
+
             for (int i = 0; i < todayHots.size(); i++) { // First one is table header, skip it
                 GalleryInfo gi = lifanParseGalleryInfo(todayHots.get(i));
                 if (null != gi) {

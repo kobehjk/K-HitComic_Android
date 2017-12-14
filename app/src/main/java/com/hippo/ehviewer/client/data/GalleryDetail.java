@@ -41,6 +41,8 @@ public class GalleryDetail extends GalleryInfo {
     public int previewPages;
     public PreviewSet previewSet;
 
+    public String pageSrcUrl;
+
     @Override
     public int describeContents() {
         return 0;
