@@ -525,6 +525,16 @@ public class GalleryDetailParser {
         }
     }
 
+    public static int parsePagesLiFan(Document document) throws ParseException {
+        try{
+            String page = document.getElementsByClass("page11lf").first().select("a").first().text();
+            page = page.substring(1,page.length()-2);
+            return NumberUtils.parseIntSafely(page,0);
+        }catch (Exception e){
+            throw new ParseException("Parse pages error", document.toString());
+        }
+    }
+
     public static PreviewSet parsePreviewSet(Document d, String body) throws ParseException {
         try {
             return parseLargePreviewSet(d, body);

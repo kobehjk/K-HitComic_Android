@@ -53,7 +53,7 @@ public class EhGalleryProvider extends GalleryProvider2 implements SpiderQueen.O
     public void start() {
         super.start();
 
-        mSpiderQueen = SpiderQueen.obtainSpiderQueen(mContext, mGalleryInfo, SpiderQueen.MODE_READ);
+        mSpiderQueen = SpiderQueen.obtainSpiderQueen(mContext, mGalleryInfo, SpiderQueen.MODE_READ, mType);
         mSpiderQueen.addOnSpiderListener(this);
     }
 

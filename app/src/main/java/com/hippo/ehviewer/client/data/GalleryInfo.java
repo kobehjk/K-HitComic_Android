@@ -143,6 +143,8 @@ public class GalleryInfo implements Parcelable {
         dest.writeInt(this.spanSize);
         dest.writeInt(this.spanIndex);
         dest.writeInt(this.spanGroupIndex);
+        dest.writeString(this.detailHref);
+        dest.writeString(this.type);
     }
 
     public GalleryInfo() {}
@@ -164,6 +166,8 @@ public class GalleryInfo implements Parcelable {
         this.spanSize = in.readInt();
         this.spanIndex = in.readInt();
         this.spanGroupIndex = in.readInt();
+        this.detailHref = in.readString();
+        this.type = in.readString();
     }
 
     public static final Parcelable.Creator<GalleryInfo> CREATOR = new Parcelable.Creator<GalleryInfo>() {

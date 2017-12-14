@@ -38,6 +38,7 @@ import com.hippo.ehviewer.client.EhConfig;
 import com.hippo.ehviewer.client.EhEngine;
 import com.hippo.ehviewer.client.EhRequestBuilder;
 import com.hippo.ehviewer.client.EhUrl;
+import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
 import com.hippo.ehviewer.client.exception.Image509Exception;
@@ -55,6 +56,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.MathUtils;
+import com.hippo.yorozuya.NumberUtils;
 import com.hippo.yorozuya.OSUtils;
 import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.Utilities;
@@ -62,11 +64,16 @@ import com.hippo.yorozuya.collect.SparseJLArray;
 import com.hippo.yorozuya.thread.PriorityThread;
 import com.hippo.yorozuya.thread.PriorityThreadFactory;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -173,7 +180,10 @@ public final class SpiderQueen implements Runnable {
     private final int mWorkerMaxCount;
     private final int mPreloadNumber;
 
-    private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo) {
+    private final String operateType;
+
+    private SpiderQueen(EhApplication application, @NonNull GalleryInfo galleryInfo, String type) {
+        operateType = type;
         mHttpClient = EhApplication.getOkHttpClient(application);
         mSpiderInfoCache = EhApplication.getSpiderInfoCache(application);
         mGalleryInfo = galleryInfo;
@@ -287,13 +297,13 @@ public final class SpiderQueen implements Runnable {
 
     @UiThread
     public static SpiderQueen obtainSpiderQueen(@NonNull Context context,
-            @NonNull GalleryInfo galleryInfo, @Mode int mode) {
+            @NonNull GalleryInfo galleryInfo, @Mode int mode, String type ) {
         OSUtils.checkMainLoop();
 
         SpiderQueen queen = sQueenMap.get(galleryInfo.gid);
         if (queen == null) {
             EhApplication application = (EhApplication) context.getApplicationContext();
-            queen = new SpiderQueen(application, galleryInfo);
+            queen = new SpiderQueen(application, galleryInfo, type);
             sQueenMap.put(galleryInfo.gid, queen);
             // Set mode
             queen.setMode(mode);
@@ -746,15 +756,47 @@ public final class SpiderQueen implements Runnable {
             spiderInfo.gid = mGalleryInfo.gid;
             spiderInfo.token = mGalleryInfo.token;
 
-            Request request = new EhRequestBuilder(EhUrl.getGalleryDetailUrl(
-                    mGalleryInfo.gid, mGalleryInfo.token, 0, false), config).build();
-            Response response = mHttpClient.newCall(request).execute();
-            String body = response.body().string();
+            if (operateType.equals(KJUrl.LIFANTYPE)){
+                Document document = Jsoup.parse(new URL(KJUrl.liFanHost+mGalleryInfo.detailHref).openStream(), "GBK", KJUrl.liFanHost+mGalleryInfo.detailHref);
 
-            spiderInfo.pages = GalleryDetailParser.parsePages(body);
-            spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
-            readPreviews(body, 0, spiderInfo);
-            return spiderInfo;
+                spiderInfo.pages = GalleryDetailParser.parsePagesLiFan(document);
+                spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
+                spiderInfo.startPage = 0;
+                Elements imgs = document.select("div#img33String");
+                String imgurl = imgs.first().select("img").attr("src");
+                String picSourceHeader = imgurl.substring(0,imgurl.length() - 7);
+                for (int i = 0, n = spiderInfo.pages; i < n; i++) {
+                    String index = "";
+                    if (i<10){
+                        index = "00" + i;
+                    }
+                    if (i>=10 && i < 100){
+                        index = "0" + i;
+                    }
+                    if (i > 100){
+                        index = "" + i;
+                    }
+                    String imgSource = picSourceHeader + index + ".jpg";
+                    synchronized (mPTokenLock) {
+                        spiderInfo.pTokenMap.put(i, imgSource);
+                    }
+
+                }
+
+                return spiderInfo;
+            }else {
+                Request request = new EhRequestBuilder(EhUrl.getGalleryDetailUrl(
+                        mGalleryInfo.gid, mGalleryInfo.token, 0, false), config).build();
+                Response response = mHttpClient.newCall(request).execute();
+                String body = response.body().string();
+
+                spiderInfo.pages = GalleryDetailParser.parsePages(body);
+                spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
+                readPreviews(body, 0, spiderInfo);
+                return spiderInfo;
+            }
+
+
         } catch (Exception e) {
             return null;
         }
@@ -834,7 +876,11 @@ public final class SpiderQueen implements Runnable {
         config.setDirty();
 
         // Read spider info
-        SpiderInfo spiderInfo = readSpiderInfoFromLocal();
+        SpiderInfo spiderInfo = null;
+        if (!operateType.equals(KJUrl.LIFANTYPE)){
+             spiderInfo = readSpiderInfoFromLocal();
+        }
+
 
         // Check interrupted
         if (Thread.currentThread().isInterrupted()) {
@@ -1067,21 +1113,25 @@ public final class SpiderQueen implements Runnable {
                 if (leakSkipHathKey) {
                     break;
                 }
-
-                pageUrl = getPageUrl(gid, index, pToken, pageUrl, skipHathKey);
-
                 GalleryPageParser.Result result = null;
-                try {
-                    result = getImageUrl(index, pageUrl);
-                } catch (Image509Exception e) {
-                    error = GetText.getString(R.string.error_509);
-                } catch (Exception e) {
-                    error = ExceptionUtils.getReadableString(e);
+                if (!operateType.equals(KJUrl.LIFANTYPE)){
+                    pageUrl = getPageUrl(gid, index, pToken, pageUrl, skipHathKey);
+
+                    try {
+                        result = getImageUrl(index, pageUrl);
+                    } catch (Image509Exception e) {
+                        error = GetText.getString(R.string.error_509);
+                    } catch (Exception e) {
+                        error = ExceptionUtils.getReadableString(e);
+                    }
+                    if (result == null) {
+                        // Get image url failed
+                        break;
+                    }
                 }
-                if (result == null) {
-                    // Get image url failed
-                    break;
-                }
+
+
+
                 // Check interrupted
                 if (Thread.currentThread().isInterrupted()) {
                     error = "Interrupted";
@@ -1089,23 +1139,28 @@ public final class SpiderQueen implements Runnable {
                     break;
                 }
 
-                if (Settings.getDownloadOriginImage() && !TextUtils.isEmpty(result.originImageUrl)) {
-                    imageUrl = result.originImageUrl;
-                } else {
-                    imageUrl = result.imageUrl;
-                }
-                skipHathKey = result.skipHathKey;
-                if (!TextUtils.isEmpty(skipHathKey)) {
-                    if (skipHathKeys.contains(skipHathKey)) {
-                        // Duplicate skip hath key, don't run next turn
-                        leakSkipHathKey = true;
+                if (!operateType.equals(KJUrl.LIFANTYPE)){
+                    if (Settings.getDownloadOriginImage() && !TextUtils.isEmpty(result.originImageUrl)) {
+                        imageUrl = result.originImageUrl;
                     } else {
-                        skipHathKeys.add(skipHathKey);
+                        imageUrl = result.imageUrl;
                     }
-                } else {
-                    // No skip hath key, don't run next turn
-                    leakSkipHathKey = true;
+                }else {
+                    imageUrl = pToken;
                 }
+
+//                skipHathKey = result.skipHathKey;
+//                if (!TextUtils.isEmpty(skipHathKey)) {
+//                    if (skipHathKeys.contains(skipHathKey)) {
+//                        // Duplicate skip hath key, don't run next turn
+//                        leakSkipHathKey = true;
+//                    } else {
+//                        skipHathKeys.add(skipHathKey);
+//                    }
+//                } else {
+//                    // No skip hath key, don't run next turn
+//                    leakSkipHathKey = true;
+//                }
 
                 // If it is force request, skip first image
                 //if (force && i == 0) {
@@ -1116,6 +1171,9 @@ public final class SpiderQueen implements Runnable {
                     Log.d(TAG, imageUrl);
                 }
 //                imageUrl = "http://pm.weakcn.com/lifanacgup/lifanacg/20171207/4/000.jpg";
+
+
+
                 // Download image
                 OutputStreamPipe pipe = null;
                 InputStream is = null;
@@ -1280,7 +1338,7 @@ public final class SpiderQueen implements Runnable {
             if (force) {
                 synchronized (mPTokenLock) {
                     int i = spiderInfo.pTokenMap.indexOfKey(index);
-                    if (i >= 0) {
+                    if  (i >= 0) {
                         String pToken = spiderInfo.pTokenMap.valueAt(i);
                         if (SpiderInfo.TOKEN_FAILED.equals(pToken)) {
                             spiderInfo.pTokenMap.remove(i);

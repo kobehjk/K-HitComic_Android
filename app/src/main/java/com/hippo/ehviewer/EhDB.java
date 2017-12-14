@@ -162,6 +162,8 @@ public class EhDB {
                         gi.category = cursor.getInt(4);
                         gi.thumb = cursor.getString(5);
                         gi.uploader = cursor.getString(6);
+                        gi.detailHref = cursor.getString(8);
+                        gi.type = cursor.getString(9);
                         try {
                             // In 0.6.x version, NaN is stored
                             gi.rating = cursor.getFloat(7);
@@ -558,11 +560,15 @@ public class EhDB {
         if (null != info) {
             // Update time
             info.time = System.currentTimeMillis();
+            info.detailHref = galleryInfo.detailHref;
+            info.type = galleryInfo.type;
             dao.update(info);
         } else {
             // New history
             info = new HistoryInfo(galleryInfo);
             info.time = System.currentTimeMillis();
+            info.detailHref = galleryInfo.detailHref;
+            info.type = galleryInfo.type;
             dao.insert(info);
             List<HistoryInfo> list = dao.queryBuilder().orderDesc(HistoryDao.Properties.Time)
                     .limit(-1).offset(MAX_HISTORY_COUNT).list();

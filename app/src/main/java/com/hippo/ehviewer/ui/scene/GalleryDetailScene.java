@@ -1146,10 +1146,12 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
             if (galleryInfo != null) {
                 Intent intent = new Intent(activity, GalleryActivity.class);
 
-                intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
+
                 if (galleryInfo.type != null && galleryInfo.type.equals(KJUrl.LIFANTYPE) ){
+                    intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
                     intent.setAction(GalleryActivity.ACTION_LIFAN);
                 }else {
+                    intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, galleryInfo);
                     intent.setAction(GalleryActivity.ACTION_EH);
                 }
                 startActivity(intent);
