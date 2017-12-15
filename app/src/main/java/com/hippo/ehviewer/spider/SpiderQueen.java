@@ -1163,9 +1163,9 @@ public final class SpiderQueen implements Runnable {
 //                }
 
                 // If it is force request, skip first image
-                //if (force && i == 0) {
-                //    continue;
-                //}
+                if (force && i == 0) {
+                    continue;
+                }
 
                 if (DEBUG_LOG) {
                     Log.d(TAG, imageUrl);

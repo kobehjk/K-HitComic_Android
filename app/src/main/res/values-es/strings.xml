@@ -21,11 +21,11 @@
 
     <!-- Category -->
 
-    <string name="homepage">Pagina de Inicio</string>
-    <string name="whats_hot">Destacado</string>
-    <string name="favourite">Favoritos</string>
-    <string name="history">Historial</string>
-    <string name="downloads">Descargas</string>
+    <string name="homepage">Hot</string>
+    <string name="whats_hot">High Definition</string>
+    <string name="favourite">Sex</string>
+    <string name="history">Fan</string>
+    <string name="downloads">International</string>
     <string name="settings">Configuraciones</string>
 
     <string name="username">Usuario</string>

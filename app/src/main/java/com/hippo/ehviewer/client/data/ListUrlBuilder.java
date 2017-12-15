@@ -39,7 +39,7 @@ import java.net.URLEncoder;
 
 public class ListUrlBuilder implements Cloneable, Parcelable {
 
-    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH, MODE_LIFAN})
+    @IntDef({MODE_NORMAL, MODE_UPLOADER, MODE_TAG, MODE_WHATS_HOT, MODE_IMAGE_SEARCH, MODE_LIFAN, MODE_HOT, MODE_XIEE, MODE_TONGREN, MODE_DONGTAI})
     @Retention(RetentionPolicy.SOURCE)
     private @interface Mode {}
 
@@ -50,6 +50,10 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
     public static final int MODE_WHATS_HOT = 0x3;
     public static final int MODE_IMAGE_SEARCH = 0x4;
     public static final int MODE_LIFAN = 0x5;
+    public static final int MODE_HOT = 0x6;
+    public static final int MODE_XIEE = 0x7;
+    public static final int MODE_TONGREN = 0x8;
+    public static final int MODE_DONGTAI = 0x9;
 
     public static final int DEFAULT_ADVANCE = AdvanceSearchTable.SNAME | AdvanceSearchTable.STAGS;
     public static final int DEFAULT_MIN_RATING = 2;
@@ -469,7 +473,35 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
             case MODE_IMAGE_SEARCH:
                 return EhUrl.getImageSearchUrl();
             case MODE_LIFAN:
+                if (mPageIndex != 0){
+                    String url = KJUrl.liFanTuiJian + "list_2_" + mPageIndex+1 + ".html";
+                    return url;
+                }
+                return KJUrl.liFanTuiJian;
+            case MODE_HOT:
+                if (mPageIndex != 0){
+                    String url = KJUrl.liFanTuiJian + "list_3_" + mPageIndex+1 + ".html";
+                    return url;
+                }
                 return KJUrl.liFanShaoNv;
+            case MODE_XIEE:
+                if (mPageIndex != 0){
+                String url = KJUrl.liFanTuiJian + "list_4_" + mPageIndex+1 + ".html";
+                return url;
+            }
+                return KJUrl.liFanNeiHan;
+            case MODE_TONGREN:
+                if (mPageIndex != 0){
+                String url = KJUrl.liFanTuiJian + "list_1_" + mPageIndex+1 + ".html";
+                return url;
+            }
+                return KJUrl.liFanTongRen;
+            case MODE_DONGTAI:
+                if (mPageIndex != 0){
+                String url = KJUrl.liFanTuiJian + "list_1_" + mPageIndex+1 + ".html";
+                return url;
+            }
+                return KJUrl.liFanDongTai;
         }
     }
 

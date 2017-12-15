@@ -224,7 +224,7 @@ public class EhEngine {
     public static GalleryListParser.Result getGalleryListLiFan(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
                                                           String url) throws Exception {
         Log.d(TAG, url);
-        Request request = new EhRequestBuilder(KJUrl.liFanShaoNv, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
+        Request request = new EhRequestBuilder(url, null != task ? task.getEhConfig() : Settings.getEhConfig()).build();
         Call call = okHttpClient.newCall(request);
 
         // Put call
@@ -241,7 +241,7 @@ public class EhEngine {
             code = response.code();
             headers = response.headers();
             body = response.body().string();
-            Document doc = Jsoup.parse(new URL(KJUrl.liFanShaoNv).openStream(), "GBK", url);
+            Document doc = Jsoup.parse(new URL(url).openStream(), "GBK", url);
             //kobehjk 解析doc
             result = GalleryListParser.lifanParse(doc);
         } catch (Exception e) {

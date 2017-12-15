@@ -19,11 +19,11 @@
 
     <string name="app_name">污漫</string>
 
-    <string name="homepage">主页</string>
-    <string name="whats_hot">热门</string>
-    <string name="favourite">收藏</string>
-    <string name="history">历史</string>
-    <string name="downloads">下载</string>
+    <string name="homepage">推荐</string>
+    <string name="whats_hot">高清</string>
+    <string name="favourite">内涵</string>
+    <string name="history">同人</string>
+    <string name="downloads">国外</string>
     <string name="settings">设置</string>
 
     <string name="username">用户名</string>

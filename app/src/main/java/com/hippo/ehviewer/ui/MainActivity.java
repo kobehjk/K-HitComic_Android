@@ -553,12 +553,12 @@ public final class MainActivity extends StageActivity
 
         if (id == R.id.nav_homepage) {
             Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_LIFAN);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
         } else if (id == R.id.nav_whats_hot) {
             Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOT);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
 //            Bundle args = new Bundle();
@@ -567,13 +567,13 @@ public final class MainActivity extends StageActivity
 //                    .setArgs(args));
         } else if (id == R.id.nav_favourite) {
             Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_XIEE);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
 //            startScene(new Announcer(FavoritesScene.class));
         } else if (id == R.id.nav_history) {
             Bundle args = new Bundle();
-            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_TONGREN);
             startSceneFirstly(new Announcer(GalleryListScene.class)
                     .setArgs(args));
 //            startScene(new Announcer(HistoryScene.class));

@@ -19,12 +19,12 @@
 
     <string name="app_name">污漫</string>
 
-    <string name="homepage">主頁</string>
-    <string name="whats_hot">熱門</string>
-    <string name="favourite">收藏</string>
-    <string name="history">歷史</string>
-    <string name="downloads">下載</string>
-    <string name="settings">設定</string>
+    <string name="homepage">推薦</string>
+    <string name="whats_hot">高清</string>
+    <string name="favourite">內涵</string>
+    <string name="history">同人</string>
+    <string name="downloads">國外</string>
+    <string name="settings">設置</string>
 
     <string name="username">使用者名稱</string>
     <string name="password">密碼</string>
