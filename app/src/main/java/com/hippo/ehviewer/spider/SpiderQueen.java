@@ -757,26 +757,40 @@ public final class SpiderQueen implements Runnable {
             spiderInfo.token = mGalleryInfo.token;
 
             if (operateType.equals(KJUrl.LIFANTYPE)){
-                Document document = Jsoup.parse(new URL(KJUrl.liFanHost+mGalleryInfo.detailHref).openStream(), "GBK", KJUrl.liFanHost+mGalleryInfo.detailHref);
+                String contentUrl = KJUrl.liFanHost+mGalleryInfo.detailHref;
+                Document document = Jsoup.parse(new URL(contentUrl).openStream(), "GBK", contentUrl);
 
                 spiderInfo.pages = GalleryDetailParser.parsePagesLiFan(document);
                 spiderInfo.pTokenMap = new SparseArray<>(spiderInfo.pages);
                 spiderInfo.startPage = 0;
                 Elements imgs = document.select("div#img33String");
                 String imgurl = imgs.first().select("img").attr("src");
+                String extension = ".jpg";
                 String picSourceHeader = imgurl.substring(0,imgurl.length() - 7);
+                if (imgurl.contains("gif")){
+                    extension = ".gif";
+                    picSourceHeader = imgurl.substring(0,imgurl.length() - 5);
+                }
+
                 for (int i = 0, n = spiderInfo.pages; i < n; i++) {
-                    String index = "";
-                    if (i<10){
-                        index = "00" + i;
+                    String imgSource = "";
+                    if (extension.equals(".gif")){
+                        int index = i+1;
+                        imgSource = picSourceHeader + index + extension;
+                    }else {
+                        String index = "";
+                        if (i<10){
+                            index = "00" + i;
+                        }
+                        if (i>=10 && i < 100){
+                            index = "0" + i;
+                        }
+                        if (i > 100){
+                            index = "" + i;
+                        }
+                        imgSource = picSourceHeader + index + extension;
                     }
-                    if (i>=10 && i < 100){
-                        index = "0" + i;
-                    }
-                    if (i > 100){
-                        index = "" + i;
-                    }
-                    String imgSource = picSourceHeader + index + ".jpg";
+
                     synchronized (mPTokenLock) {
                         spiderInfo.pTokenMap.put(i, imgSource);
                     }
