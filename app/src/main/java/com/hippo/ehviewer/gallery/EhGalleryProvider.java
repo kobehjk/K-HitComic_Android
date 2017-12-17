@@ -16,10 +16,14 @@
 
 package com.hippo.ehviewer.gallery;
 
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 
+import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.spider.SpiderQueen;
 import com.hippo.glgallery.GalleryProvider;
@@ -28,6 +32,8 @@ import com.hippo.unifile.UniFile;
 import com.hippo.yorozuya.SimpleHandler;
 
 import java.util.Locale;
+
+import static com.hippo.ehviewer.GetText.getString;
 
 public class EhGalleryProvider extends GalleryProvider2 implements SpiderQueen.OnSpiderListener {
 
@@ -108,6 +114,8 @@ public class EhGalleryProvider extends GalleryProvider2 implements SpiderQueen.O
         if (mSpiderQueen != null) {
             mSpiderQueen.putStartPage(page);
         }
+
+
     }
 
     @Override

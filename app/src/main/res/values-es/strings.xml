@@ -619,4 +619,6 @@
     <string name="error_something_wrong_happened">Sucedio algo malo</string>
     <string name="dialog_archive_title">H@H Downloader</string>
 
+    <string name="settings_about_warning">tips</string>
+
 </resources>

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.hippo.ehviewer"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 25
         versionCode 77
         versionName "1.0.24"
@@ -51,6 +51,7 @@ clean {
 }
 
 dependencies {
+
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:$supportLibrary"
     compile "com.android.support:design:$supportLibrary"

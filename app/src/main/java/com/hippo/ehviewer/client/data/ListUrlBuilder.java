@@ -474,31 +474,36 @@ public class ListUrlBuilder implements Cloneable, Parcelable {
                 return EhUrl.getImageSearchUrl();
             case MODE_LIFAN:
                 if (mPageIndex != 0){
-                    String url = KJUrl.liFanTuiJian + "list_2_" + mPageIndex+1 + ".html";
+                    int index = mPageIndex +1;
+                    String url = KJUrl.liFanTuiJian + "list_2_" + index + ".html";
                     return url;
                 }
                 return KJUrl.liFanTuiJian;
             case MODE_HOT:
                 if (mPageIndex != 0){
-                    String url = KJUrl.liFanTuiJian + "list_3_" + mPageIndex+1 + ".html";
+                    int index = mPageIndex +1;
+                    String url = KJUrl.liFanShaoNv + "list_3_" + index + ".html";
                     return url;
                 }
                 return KJUrl.liFanShaoNv;
             case MODE_XIEE:
                 if (mPageIndex != 0){
-                String url = KJUrl.liFanTuiJian + "list_4_" + mPageIndex+1 + ".html";
+                    int index = mPageIndex +1;
+                String url = KJUrl.liFanNeiHan + "list_4_" + index + ".html";
                 return url;
             }
                 return KJUrl.liFanNeiHan;
             case MODE_TONGREN:
                 if (mPageIndex != 0){
-                String url = KJUrl.liFanTuiJian + "list_1_" + mPageIndex+1 + ".html";
+                    int index = mPageIndex +1;
+                String url = KJUrl.liFanTongRen + "list_1_" + index + ".html";
                 return url;
             }
                 return KJUrl.liFanTongRen;
             case MODE_DONGTAI:
                 if (mPageIndex != 0){
-                String url = KJUrl.liFanTuiJian + "list_1_" + mPageIndex+1 + ".html";
+                    int index = mPageIndex +1;
+                String url = KJUrl.liFanDongTai + "list_1_" + index + ".html";
                 return url;
             }
                 return KJUrl.liFanDongTai;

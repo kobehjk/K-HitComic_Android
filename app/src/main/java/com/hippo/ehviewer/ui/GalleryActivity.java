@@ -30,6 +30,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -51,6 +53,7 @@ import android.widget.Toast;
 import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.KJUrl;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.gallery.DirGalleryProvider;
@@ -76,6 +79,7 @@ import com.hippo.yorozuya.SimpleHandler;
 import com.hippo.yorozuya.ViewUtils;
 
 import java.io.File;
+
 
 public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChangeListener,
         GalleryView.Listener {
@@ -130,6 +134,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
     private TextView mRightText;
     @Nullable
     private ReversibleSeekBar mSeekBar;
+    @Nullable
+    private View coverView;
 
     private ObjectAnimator mSeekBarPanelAnimator;
 
@@ -332,6 +338,8 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         mRightText = (TextView) ViewUtils.$$(mSeekBarPanel, R.id.right);
         mSeekBar = (ReversibleSeekBar) ViewUtils.$$(mSeekBarPanel, R.id.seek_bar);
         mSeekBar.setOnSeekBarChangeListener(this);
+
+        coverView = (View) ViewUtils.$$(this,R.id.cover_view);
 
         mSize = mGalleryProvider.size();
         mCurrentIndex = startPage;
@@ -596,6 +604,30 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
         }
         task.setData(NotifyTask.KEY_CURRENT_INDEX, index);
         SimpleHandler.getInstance().post(task);
+
+        if (index > 2 && !APPConfig.isValible ) {
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    coverView.setVisibility(View.VISIBLE);
+                    new AlertDialog.Builder(GalleryActivity.this)
+                            .setTitle(R.string.settings_about_warning)
+                            .setMessage(getString(R.string.purchase_dialog).replace('$', '@'))
+                            .show();
+                }
+            });
+        }else {
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    coverView.setVisibility(View.INVISIBLE);
+
+                }
+            });
+        }
+
     }
 
     @Override
@@ -610,22 +642,33 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
     @Override
     public void onTapMenuArea() {
-        NotifyTask task = mNotifyTaskPool.pop();
-        if (task == null) {
-            task = new NotifyTask();
-        }
-        task.setData(NotifyTask.KEY_TAP_MENU_AREA, 0);
-        SimpleHandler.getInstance().post(task);
+//        NotifyTask task = mNotifyTaskPool.pop();
+//        if (task == null) {
+//            task = new NotifyTask();
+//        }
+//        task.setData(NotifyTask.KEY_TAP_MENU_AREA, 0);
+//        SimpleHandler.getInstance().post(task);
     }
 
     @Override
     public void onLongPressPage(int index) {
-        NotifyTask task = mNotifyTaskPool.pop();
-        if (task == null) {
-            task = new NotifyTask();
+
+        if(APPConfig.isValible){
+            NotifyTask task = mNotifyTaskPool.pop();
+            if (task == null) {
+                task = new NotifyTask();
+            }
+            task.setData(NotifyTask.KEY_TAP_MENU_AREA, 0);
+            SimpleHandler.getInstance().post(task);
         }
-        task.setData(NotifyTask.KEY_LONG_PRESS_PAGE, index);
-        SimpleHandler.getInstance().post(task);
+
+
+//        NotifyTask task = mNotifyTaskPool.pop();
+//        if (task == null) {
+//            task = new NotifyTask();
+//        }
+//        task.setData(NotifyTask.KEY_LONG_PRESS_PAGE, index);
+//        SimpleHandler.getInstance().post(task);
     }
 
     private void showSlider(View sliderPanel) {
@@ -1010,6 +1053,7 @@ public class GalleryActivity extends EhActivity implements SeekBar.OnSeekBarChan
 
             if (mGalleryProvider != null) {
                 int size = mGalleryProvider.size();
+
                 NotifyTask task = mNotifyTaskPool.pop();
                 if (task == null) {
                     task = new NotifyTask();

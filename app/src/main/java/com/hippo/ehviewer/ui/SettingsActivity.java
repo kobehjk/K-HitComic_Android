@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
 import com.hippo.ehviewer.R;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.ui.fragment.AboutFragment;
 import com.hippo.ehviewer.ui.fragment.AdvancedFragment;
 import com.hippo.ehviewer.ui.fragment.DownloadFragment;
@@ -167,12 +168,15 @@ public final class SettingsActivity extends EhPreferenceActivity {
     public void startWithFragment(String fragmentName, Bundle args,
             Fragment resultTo, int resultRequestCode, @StringRes int titleRes,
             @StringRes int shortTitleRes) {
-        Intent intent = onBuildStartFragmentIntent(fragmentName, args, titleRes, shortTitleRes);
-        if (resultTo == null) {
-            startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
-        } else {
-            resultTo.startActivityForResult(intent, resultRequestCode);
+        if (APPConfig.isValible){
+            Intent intent = onBuildStartFragmentIntent(fragmentName, args, titleRes, shortTitleRes);
+            if (resultTo == null) {
+                startActivityForResult(intent, REQUEST_CODE_FRAGMENT);
+            } else {
+                resultTo.startActivityForResult(intent, resultRequestCode);
+            }
         }
+
     }
 
     @Override

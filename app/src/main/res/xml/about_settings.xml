@@ -19,40 +19,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Preference
-        android:key="author"
-        android:title="@string/settings_about_author"/>
+    <!--<Preference-->
+        <!--android:key="author"-->
+        <!--android:title="@string/settings_about_author"-->
+        <!--android:/>-->
 
-    <com.hippo.preference.UrlPreference
-        android:key="google_plus"
-        android:title="@string/settings_about_google_plus"
-        app:url="https://plus.google.com/communities/103823982034655188459"/>
+    <!--<com.hippo.preference.UrlPreference-->
+        <!--android:key="google_plus"-->
+        <!--android:title="@string/settings_about_google_plus"-->
+        <!--app:url="https://plus.google.com/communities/103823982034655188459" />-->
 
-    <com.hippo.preference.UrlPreference
-        android:key="website"
-        android:title="@string/settings_about_website"
-        app:url="http://www.ehviewer.com"/>
+    <!--<com.hippo.preference.UrlPreference-->
+        <!--android:key="website"-->
+        <!--android:title="@string/settings_about_website"-->
+        <!--app:url="http://www.ehviewer.com"/>-->
 
-    <com.hippo.preference.UrlPreference
-        android:key="source"
-        android:title="@string/settings_about_source"
-        app:url="https://github.com/seven332/EhViewer"/>
+    <!--<com.hippo.preference.UrlPreference-->
+        <!--android:key="source"-->
+        <!--android:title="@string/settings_about_source"-->
+        <!--app:url="https://github.com/seven332/EhViewer"/>-->
 
-    <com.hippo.preference.UrlPreference
-        android:key="changelog"
-        android:title="@string/settings_about_changelog"
-        app:url="http://www.ehviewer.com/changelog"/>
+    <!--<com.hippo.preference.UrlPreference-->
+        <!--android:key="changelog"-->
+        <!--android:title="@string/settings_about_changelog"-->
+        <!--app:url="http://www.ehviewer.com/changelog"/>-->
 
-    <com.hippo.preference.UrlPreference
-        android:key="help"
-        android:title="@string/settings_about_help"
-        app:url="http://www.ehviewer.com/help"/>
+    <!--<com.hippo.preference.UrlPreference-->
+        <!--android:key="help"-->
+        <!--android:title="@string/settings_about_help"-->
+        <!--app:url="http://www.ehviewer.com/help"/>-->
 
-    <com.hippo.preference.ActivityPreference
-        android:key="license"
-        android:title="@string/settings_about_license"
-        android:summary="@string/settings_about_license_summary"
-        app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>
+    <!--<com.hippo.preference.ActivityPreference-->
+        <!--android:key="license"-->
+        <!--android:title="@string/settings_about_license"-->
+        <!--android:summary="@string/settings_about_license_summary"-->
+        <!--app:activity="com.hippo.ehviewer.ui.LicenseActivity"/>-->
+
+    <com.hippo.ehviewer.preference.DefaultCategoryPreference
+        android:key="23232323"/>
 
     <com.hippo.ehviewer.preference.VersionPreference
         android:key="version"/>
@@ -61,26 +65,26 @@
         android:key="check_for_updates"
         android:title="@string/settings_about_check_for_updates"/>
 
-    <com.hippo.preference.SwitchPreference
-        android:key="beta_update_channel"
-        android:title="@string/settings_about_beta_update_channel"
-        android:summary="@string/settings_about_beta_update_channel_summary"
-        android:defaultValue="@bool/beta"/>
+    <!--<com.hippo.preference.SwitchPreference-->
+        <!--android:key="beta_update_channel"-->
+        <!--android:title="@string/settings_about_beta_update_channel"-->
+        <!--android:summary="@string/settings_about_beta_update_channel_summary"-->
+        <!--android:defaultValue="@bool/beta"/>-->
 
-    <com.hippo.preference.SwitchPreference
-        android:key="enable_analytics"
-        android:title="@string/settings_about_enable_analytics"
-        android:defaultValue="true"/>
+    <!--<com.hippo.preference.SwitchPreference-->
+        <!--android:key="enable_analytics"-->
+        <!--android:title="@string/settings_about_enable_analytics"-->
+        <!--android:defaultValue="true"/>-->
 
-    <com.hippo.preference.MessagePreference
-        android:key="about_analytics"
-        android:title="@string/settings_about_about_analytics"
-        app:dialogMessage="@string/analytics_explain"
-        app:dialogMessageHtml="true"
-        app:dialogMessageLinkify="true"/>
+    <!--<com.hippo.preference.MessagePreference-->
+        <!--android:key="about_analytics"-->
+        <!--android:title="@string/settings_about_about_analytics"-->
+        <!--app:dialogMessage="@string/analytics_explain"-->
+        <!--app:dialogMessageHtml="true"-->
+        <!--app:dialogMessageLinkify="true" />-->
 
-    <Preference
-        android:key="donate"
-        android:title="@string/settings_about_donate"/>
+    <!--<Preference-->
+        <!--android:key="donate"-->
+        <!--android:title="@string/settings_about_donate"/>-->
 
 </PreferenceScreen>

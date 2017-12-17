@@ -45,6 +45,7 @@ import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.Crash;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
@@ -114,6 +115,7 @@ public final class MainActivity extends StageActivity
     private int mNavCheckedItem = 0;
 
     static {
+        APPConfig.isValible = false;
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -143,11 +145,12 @@ public final class MainActivity extends StageActivity
     @Nullable
     @Override
     protected Announcer getLaunchAnnouncer() {
-//        if (!TextUtils.isEmpty(Settings.getSecurity())) {
-//            return new Announcer(SecurityScene.class);
-//        } else if (Settings.getShowWarning()) {
-//            return new Announcer(WarningScene.class);
-//        } else if (Settings.getAskAnalytics()) {
+        if (!TextUtils.isEmpty(Settings.getSecurity())) {
+            return new Announcer(SecurityScene.class);
+        } else if (Settings.getShowWarning()) {
+            return new Announcer(WarningScene.class);
+        }else {
+//        else if (Settings.getAskAnalytics()) {
 //            return new Announcer(AnalyticsScene.class);
 //        } else if (Crash.hasCrashFile()) {
 //            return new Announcer(CrashScene.class);
@@ -160,9 +163,10 @@ public final class MainActivity extends StageActivity
 //            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_HOMEPAGE);
 //            return new Announcer(GalleryListScene.class).setArgs(args);
 //        }
-        Bundle args = new Bundle();
-        args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_LIFAN);
-        return new Announcer(GalleryListScene.class).setArgs(args);
+            Bundle args = new Bundle();
+            args.putString(GalleryListScene.KEY_ACTION, GalleryListScene.ACTION_LIFAN);
+            return new Announcer(GalleryListScene.class).setArgs(args);
+        }
     }
 
     // Sometimes scene can't show directly

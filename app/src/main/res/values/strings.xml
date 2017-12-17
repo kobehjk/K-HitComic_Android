@@ -54,7 +54,7 @@
     <string name="display_name_is_empty">Display name is empty</string>
     <string name="sign_in_first">Please sign in first</string>
 
-    <string name="default_display_name">Little Hippo</string>
+    <string name="default_display_name">Dirty Comic</string>
 
     <string name="cookie_explain">A cookie is a small piece of data stored in web browser. Search it if you don\'t know what it is or how to get it.\n\nPlease enter special cookies to sign in.</string>
     <string name="text_is_empty">Text is empty</string>
@@ -539,6 +539,7 @@
     <string name="settings_about_check_for_updates">Check for updates</string>
     <string name="settings_about_beta_update_channel">Beta update channel</string>
     <string name="settings_about_beta_update_channel_summary">Beta release might be broken on your devices</string>
+    <string name="purchase_dialog">please purchase code to unlock rest</string>
 
     <string name="enable">Enable</string>
     <string name="enabled">Enabled</string>
@@ -663,4 +664,5 @@
     <string name="archive">Archive</string>
     <string name="download_archive_failure_no_hath">Need H@H client for archive download</string>
 
+    <string name="settings_about_warning">tips</string>
 </resources>

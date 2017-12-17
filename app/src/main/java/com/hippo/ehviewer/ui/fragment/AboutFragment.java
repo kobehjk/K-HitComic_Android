@@ -45,19 +45,19 @@ public class AboutFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.about_settings);
 
-        Preference author = findPreference(KEY_AUTHOR);
-        Preference enableAnalytics = findPreference(Settings.KEY_ENABLE_ANALYTICS);
-        Preference donate = findPreference(KEY_DONATE);
+//        Preference author = findPreference(KEY_AUTHOR);
+//        Preference enableAnalytics = findPreference(Settings.KEY_ENABLE_ANALYTICS);
+//        Preference donate = findPreference(KEY_DONATE);
         Preference checkForUpdate = findPreference(KEY_CHECK_FOR_UPDATES);
 
-        author.setSummary(getString(R.string.settings_about_author_summary).replace('$', '@'));
-        donate.setSummary(getString(R.string.settings_about_donate_summary).replace('$', '@'));
+//        author.setSummary(getString(R.string.settings_about_author_summary).replace('$', '@'));
+//        donate.setSummary(getString(R.string.settings_about_donate_summary).replace('$', '@'));
 
-        author.setOnPreferenceClickListener(this);
-        donate.setOnPreferenceClickListener(this);
-        checkForUpdate.setOnPreferenceClickListener(this);
+//        author.setOnPreferenceClickListener(this);
+//        donate.setOnPreferenceClickListener(this);
+//        checkForUpdate.setOnPreferenceClickListener(this);
 
-        enableAnalytics.setOnPreferenceChangeListener(this);
+//        enableAnalytics.setOnPreferenceChangeListener(this);
     }
 
     @Override

@@ -38,7 +38,7 @@
     <string name="display_name_is_empty">昵称为空</string>
     <string name="sign_in_first">请先登录</string>
 
-    <string name="default_display_name">Little Hippo</string>
+    <string name="default_display_name">污漫</string>
 
     <string name="cookie_explain">Cookie 是存储在浏览器里的一小块数据。如果您不清楚 Cookie 什么或者怎么获取 Cookie，最好搜索一下。\n\n请输入特定的 Cookie 来登录。</string>
     <string name="text_is_empty">文本为空</string>
@@ -78,7 +78,7 @@
     <string name="error_cant_save_image">无法保存图片</string>
     <string name="error_invalid_number">非法数字</string>
 
-    <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的任何后果负责。</string>
+    <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。18以下人群请在家长陪同下使用。本应用作者不会对由本应用造成的任何后果负责。</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
     <string name="error_password_cannot_empty">密码不可为空</string>
     <string name="skip_signing_in">跳过登录</string>
@@ -613,4 +613,6 @@
     <string name="archive">压缩包</string>
     <string name="download_archive_failure_no_hath">下载压缩包需要 H@H 客户端</string>
 
+    <string name="settings_about_warning">提示</string>
+    <string name="purchase_dialog">请购买激活码激活软件阅读余下内容，激活更有其他精彩特权</string>
 </resources>

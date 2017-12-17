@@ -777,6 +777,9 @@ public final class SpiderQueen implements Runnable {
                     if (extension.equals(".gif")){
                         int index = i+1;
                         imgSource = picSourceHeader + index + extension;
+                        if (i == 0){
+                            imgSource = picSourceHeader + "2" + extension;
+                        }
                     }else {
                         String index = "";
                         if (i<10){
@@ -789,6 +792,9 @@ public final class SpiderQueen implements Runnable {
                             index = "" + i;
                         }
                         imgSource = picSourceHeader + index + extension;
+                        if (i == 0){
+                            imgSource = picSourceHeader + "001" + extension;
+                        }
                     }
 
                     synchronized (mPTokenLock) {
