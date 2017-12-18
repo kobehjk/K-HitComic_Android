@@ -17,6 +17,7 @@
 package com.hippo.ehviewer.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -32,6 +33,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -371,6 +373,27 @@ public final class MainActivity extends StageActivity
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String DEVICE_ID = tm.getDeviceId();
+        if(DEVICE_ID != null){
+            APPConfig.deviceId = DEVICE_ID;
+        }else {
+            APPConfig.deviceId = "aaaaa";
+            APPConfig.globalFreeTime = 0;
+            APPConfig.isValible = false;
+            Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
+            return;
+        }
+
+        int freeTimes = Settings.getInt(APPConfig.deviceId,4);
+        //kobehjk-这里要加网络判断，如果失败或者次数为0则取消试看机会
+        if (freeTimes == 4){
+            APPConfig.globalFreeTime = 3;
+            APPConfig.isValible = true;
+        }else {
+            APPConfig.globalFreeTime = freeTimes;
+            APPConfig.isValible = true;
+        }
     }
 
     private void onRestore(Bundle savedInstanceState) {

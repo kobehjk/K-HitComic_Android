@@ -6,4 +6,6 @@ package com.hippo.ehviewer.client;
 
 public class APPConfig {
     public static boolean isValible;
+    public static int globalFreeTime;
+    public static String deviceId;
 }

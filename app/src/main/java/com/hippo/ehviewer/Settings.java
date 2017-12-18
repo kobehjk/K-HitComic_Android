@@ -64,6 +64,8 @@ public class Settings {
         return ehConfig;
     }
 
+
+
     public static boolean getBoolean(String key, boolean defValue) {
         try {
             return sSettingsPre.getBoolean(key, defValue);

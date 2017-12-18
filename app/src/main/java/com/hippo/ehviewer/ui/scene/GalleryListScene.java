@@ -63,6 +63,7 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhRequest;
 import com.hippo.ehviewer.client.EhUrl;
@@ -759,6 +760,13 @@ public final class GalleryListScene extends BaseScene
     public boolean onItemClick(EasyRecyclerView parent, View view, int position, long id) {
         if (null == mHelper || null == mRecyclerView) {
             return false;
+        }
+        if (APPConfig.globalFreeTime > 0){
+            APPConfig.globalFreeTime = APPConfig.globalFreeTime-1;
+            Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
+            APPConfig.isValible = true;
+        }else {
+            APPConfig.isValible = false;
         }
 
         GalleryInfo gi = mHelper.getDataAt(position);
