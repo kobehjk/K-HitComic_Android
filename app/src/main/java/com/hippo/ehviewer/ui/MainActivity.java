@@ -115,7 +115,7 @@ public final class MainActivity extends StageActivity
     private int mNavCheckedItem = 0;
 
     static {
-        APPConfig.isValible = false;
+        APPConfig.isValible = true;
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);

@@ -614,5 +614,6 @@
     <string name="download_archive_failure_no_hath">下載壓縮包需要 H@H 客户端</string>
 
     <string name="settings_about_warning">提示</string>
+    <string name="purchase_dialog">請購買激活碼激活軟件閱讀餘下內容，激活更有其他誘人特權</string>
 
 </resources>
