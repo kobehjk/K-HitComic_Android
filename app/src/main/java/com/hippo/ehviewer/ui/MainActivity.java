@@ -35,6 +35,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,8 @@ import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.data.UserDataOperation;
+import com.hippo.ehviewer.client.data.UserInfo;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.CookieSignInScene;
@@ -86,10 +89,20 @@ import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
 
+import org.json.JSONArray;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobConfig;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -208,6 +221,23 @@ public final class MainActivity extends StageActivity
         }
         return announcer;
     }
+
+    private void initBmob(){
+        BmobConfig config =new BmobConfig.Builder(this)
+        //设置appkey
+        .setApplicationId(APPConfig.bmobApplicationId)
+        //请求超时时间（单位为秒）：默认15s
+        .setConnectTimeout(30)
+        //文件分片上传时每片的大小（单位字节），默认512*1024
+        .setUploadBlockSize(1024*1024)
+        //文件的过期时间(单位为秒)：默认1800s
+        .setFileExpiration(2500)
+        .build();
+        Bmob.initialize(config);
+
+    }
+
+
 
     private File saveImageToTempFile(UniFile file) {
         if (null == file) {
@@ -348,6 +378,8 @@ public final class MainActivity extends StageActivity
         } else {
             onRestore(savedInstanceState);
         }
+
+
     }
 
     private void checkDownloadLocation() {
@@ -373,6 +405,9 @@ public final class MainActivity extends StageActivity
         // Check permission
         PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+
+        initBmob();
+
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String DEVICE_ID = tm.getDeviceId();
         if(DEVICE_ID != null){
@@ -385,15 +420,13 @@ public final class MainActivity extends StageActivity
             return;
         }
 
-        int freeTimes = Settings.getInt(APPConfig.deviceId,4);
-        //kobehjk-这里要加网络判断，如果失败或者次数为0则取消试看机会
-        if (freeTimes == 4){
-            APPConfig.globalFreeTime = 3;
-            APPConfig.isValible = true;
+        String token = Settings.getString(Settings.TOKEN,"");
+        if (!token.equals("")){
+            UserDataOperation.instance().checkToken(token);
         }else {
-            APPConfig.globalFreeTime = freeTimes;
-            APPConfig.isValible = true;
+            UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId);
         }
+
     }
 
     private void onRestore(Bundle savedInstanceState) {

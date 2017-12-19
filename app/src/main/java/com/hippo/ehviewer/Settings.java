@@ -48,6 +48,8 @@ public class Settings {
     private static SharedPreferences sSettingsPre;
     private static EhConfig sEhConfig;
 
+    public static final String TOKEN = "token";
+
     public static void initialize(Context context) {
         sContext = context.getApplicationContext();
         sSettingsPre = PreferenceManager.getDefaultSharedPreferences(sContext);
