@@ -52,6 +52,7 @@ import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
+import com.hippo.ehviewer.client.data.Token;
 import com.hippo.ehviewer.client.data.UserDataOperation;
 import com.hippo.ehviewer.client.data.UserInfo;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
@@ -85,6 +86,7 @@ import com.hippo.unifile.UniFile;
 import com.hippo.util.BitmapUtils;
 import com.hippo.util.PermissionRequester;
 import com.hippo.widget.LoadImageView;
+import com.hippo.widget.ProgressView;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
 import com.hippo.yorozuya.ViewUtils;
@@ -99,12 +101,6 @@ import java.util.List;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobConfig;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.QueryListener;
-
-import static com.hippo.ehviewer.EhApplication.getContext;
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -128,6 +124,8 @@ public final class MainActivity extends StageActivity
     private LoadImageView mAvatar;
     @Nullable
     private TextView mDisplayName;
+    @Nullable
+    private ProgressView progressBar;
 
     private int mNavCheckedItem = 0;
 
@@ -319,9 +317,22 @@ public final class MainActivity extends StageActivity
             @Override
             public void onClick(View v) {
                 if (!kkbDialog.getInputText().equals("")) {
-//                    progressBar.setVisibility(View.VISIBLE);
-//                    kkbDialog.editClose();
+                    progressBar.setVisibility(View.VISIBLE);
+                    UserDataOperation.instance().checkToken(kkbDialog.getInputText(), new UserDataOperation.CheckInterFace() {
+                        @Override
+                        public void checkCallBack(Token token) {
+                            if (token.getToken().isEmpty()){
+
+                            }else {
+
+                            }
+                            progressBar.setVisibility(View.INVISIBLE);
+                            kkbDialog.editClose();
+                        }
+                    });
+
                 }
+                UserDataOperation.instance().toast(MainActivity.this,kkbDialog.getInputText());
 //                ToastUtils.showShort(getContext(),kkbDialog.getInputText());
                 kkbDialog.editClose();
             }
@@ -372,6 +383,8 @@ public final class MainActivity extends StageActivity
     protected void onCreate2(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
 
+        progressBar = (ProgressView) ViewUtils.$$(this,R.id.progressView);
+        progressBar.setVisibility(View.INVISIBLE);
         mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
         mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
 //        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
@@ -450,17 +463,24 @@ public final class MainActivity extends StageActivity
             APPConfig.deviceId = "aaaaa";
             APPConfig.globalFreeTime = 0;
             APPConfig.isValible = false;
-            Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
+
             return;
         }
+        Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
 
         APPConfig.currentUser.setDevice_id(APPConfig.deviceId);
 
         String token = Settings.getString(Settings.TOKEN,"");
         APPConfig.currentUser.setToken(token);
-
+        progressBar.setVisibility(View.VISIBLE);
         if (!token.equals("")){
-            UserDataOperation.instance().checkToken(token);
+
+            UserDataOperation.instance().checkToken(token, new UserDataOperation.CheckInterFace() {
+                @Override
+                public void checkCallBack(Token token) {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
         }else {
             UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId);
         }

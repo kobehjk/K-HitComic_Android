@@ -52,4 +52,12 @@
             <!--android:clickable="true"/>-->
 
     </com.hippo.ehviewer.widget.EhDrawerLayout>
+
+    <com.hippo.widget.ProgressView
+        android:id="@+id/progressView"
+        style="@style/ProgressView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
 </com.hippo.widget.SafeCoordinatorLayout>
