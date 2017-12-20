@@ -502,7 +502,7 @@ public final class GalleryListScene extends BaseScene
         mShowcaseView = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
                 .setStyle(R.style.Guide)
-                .setTarget(new PointTarget(point.x, point.y / 3))
+                .setTarget(new PointTarget(0, point.y / 3))
                 .blockAllTouches()
                 .setContentTitle(R.string.guide_quick_search_title)
                 .setContentText(R.string.guide_quick_search_text)
@@ -513,7 +513,7 @@ public final class GalleryListScene extends BaseScene
                         mShowcaseView = null;
                         ViewUtils.removeFromParent(showcaseView);
                         Settings.putGuideQuickSearch(false);
-                        openDrawer(Gravity.RIGHT);
+                        openDrawer(Gravity.LEFT);
                     }
                 }).build();
     }

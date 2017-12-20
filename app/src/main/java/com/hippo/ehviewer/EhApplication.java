@@ -64,6 +64,8 @@ import okhttp3.OkHttpClient;
 
 public class EhApplication extends SceneApplication implements Thread.UncaughtExceptionHandler {
 
+    private static Context context;
+
     private static final String TAG = EhApplication.class.getSimpleName();
 
     public static final boolean BETA = false;
@@ -88,9 +90,14 @@ public class EhApplication extends SceneApplication implements Thread.UncaughtEx
 
     private final List<Activity> mActivityList = new ArrayList<>();
 
+    public static Context getContext() {
+        return context;
+    }
+
     @Override
     public void onCreate() {
         // Prepare to catch crash
+        context = getApplicationContext();
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
 

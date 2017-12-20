@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.APPConfig;
 
@@ -96,20 +97,31 @@ public class UserDataOperation {
             public void done(List<Token> list, BmobException e) {
                 if (e == null){
                     //一起同步user
-                    Token tokenInfo = list.get(0);
-                    String type = tokenInfo.getAvailable_period();
-                    Date startDate = tokenInfo.getStart_time();
-                    if (startDate == null){
-                        tokenInfo.setStart_time(new Date());
-
+                    if (list.isEmpty()){
+                        APPConfig.isValible = false;
+                        APPConfig.globalFreeTime = 0;
+                        APPConfig.currentToken = new Token();
+                        toast(EhApplication.getContext(),"激活码无效");
+                    }else {
+                        Token tokenInfo = list.get(0);
+                        String type = tokenInfo.getAvailable_period();
+                        Date startDate = tokenInfo.getStart_time();
+                        if (startDate == null){
+                            tokenInfo.setStart_time(new Date());
+                        }
+                        APPConfig.currentToken.setStart_time(startDate);
+                        APPConfig.currentToken.setToken(token);
+                        APPConfig.currentToken.setDevice_id(APPConfig.deviceId);
+                        APPConfig.currentToken.setAvailable_period(type);
                     }
-                    if (startDate == null){
-                        tokenInfo.setStart_time(new Date());
 
-                    }
                 }else {
                     APPConfig.globalFreeTime = 0;
                     APPConfig.isValible = false;
+                    APPConfig.globalFreeTime = 0;
+                    APPConfig.currentToken = new Token();
+                    toast(EhApplication.getContext(),"激活码无效");
+                    toast(EhApplication.getContext(),"激活码无效");
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
                 }
             }

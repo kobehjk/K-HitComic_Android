@@ -565,8 +565,8 @@
     <string name="error_something_wrong_happened">被玩壞了</string>
 
     <!-- Guide -->
-    <string name="guide_quick_search_title">快速搜尋</string>
-    <string name="guide_quick_search_text">從右側滑動開啟快速搜尋面板</string>
+    <string name="guide_quick_search_title">快速打开菜单</string>
+    <string name="guide_quick_search_text">從右側滑動打開選單面板，可更換類目，激活軟件</string>
     <string name="guide_collections_title">收藏夾</string>
     <string name="guide_collections_text">從右側滑動來選擇收藏夾</string>
     <string name="guide_download_labels_title">下載標籤</string>

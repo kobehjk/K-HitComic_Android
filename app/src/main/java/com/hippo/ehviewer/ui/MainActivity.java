@@ -104,6 +104,8 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 
+import static com.hippo.ehviewer.EhApplication.getContext;
+
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -311,6 +313,28 @@ public final class MainActivity extends StageActivity
         return false;
     }
 
+    private void clickActivationCode(){
+        final CommonDialog kkbDialog = new CommonDialog(this, CommonDialog.DialogType.INPUT);
+        kkbDialog.bulider().setTitle("请输入正确的兑换码").setLeftButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!kkbDialog.getInputText().equals("")) {
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    kkbDialog.editClose();
+                }
+//                ToastUtils.showShort(getContext(),kkbDialog.getInputText());
+                kkbDialog.editClose();
+            }
+        }).show();
+        kkbDialog.setRightButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                kkbDialog.editClose();
+            }
+
+        });
+    }
+
     @Override
     protected void onUnrecognizedIntent(@Nullable Intent intent) {
         Class<?> clazz = getTopSceneClass();
@@ -354,6 +378,15 @@ public final class MainActivity extends StageActivity
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+        mDisplayName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!APPConfig.isValible){
+                    clickActivationCode();
+                }
+            }
+        });
+
 
         mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
         // Pre-L need shadow drawable
@@ -408,6 +441,7 @@ public final class MainActivity extends StageActivity
 
         initBmob();
 
+        //初始化全局currentuserinfo
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String DEVICE_ID = tm.getDeviceId();
         if(DEVICE_ID != null){
@@ -420,7 +454,11 @@ public final class MainActivity extends StageActivity
             return;
         }
 
+        APPConfig.currentUser.setDevice_id(APPConfig.deviceId);
+
         String token = Settings.getString(Settings.TOKEN,"");
+        APPConfig.currentUser.setToken(token);
+
         if (!token.equals("")){
             UserDataOperation.instance().checkToken(token);
         }else {
@@ -511,7 +549,11 @@ public final class MainActivity extends StageActivity
 
         String displayName = Settings.getDisplayName();
         if (TextUtils.isEmpty(displayName)) {
-            displayName = getString(R.string.default_display_name);
+            if(APPConfig.isValible) {
+                displayName = "已激活";
+            }else {
+                displayName = "未激活 点击激活";
+            }
         }
         mDisplayName.setText(displayName);
     }

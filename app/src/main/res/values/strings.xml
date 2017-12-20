@@ -610,8 +610,8 @@
     <string name="error_something_wrong_happened">Something wrong happened</string>
 
     <!-- Guide -->
-    <string name="guide_quick_search_title">Quick Search</string>
-    <string name="guide_quick_search_text">Swipe right to open quick search panel</string>
+    <string name="guide_quick_search_title">Quick Menu</string>
+    <string name="guide_quick_search_text">Swipe right to open quick menu panel</string>
     <string name="guide_collections_title">Collections</string>
     <string name="guide_collections_text">Swipe right to select collections</string>
     <string name="guide_download_labels_title">Download Labels</string>
