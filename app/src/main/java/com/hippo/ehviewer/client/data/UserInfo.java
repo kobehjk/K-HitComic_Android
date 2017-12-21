@@ -13,8 +13,8 @@ public class UserInfo extends BmobObject {
     private Date start_time;
     private int free_times;
     private String device_id;
-    private String available_period;
-    private Date end_time;
+//    private String available_period;
+//    private Date end_time;
 
     public void setToken(String token) {
         this.token = token;
@@ -32,9 +32,9 @@ public class UserInfo extends BmobObject {
         this.device_id = device_id;
     }
 
-    public void setAvailable_period(String available_period) {
-        this.available_period = available_period;
-    }
+//    public void setAvailable_period(String available_period) {
+////        this.available_period = available_period;
+//    }
 
     public String getToken() {
         return token;
@@ -52,7 +52,7 @@ public class UserInfo extends BmobObject {
         return device_id;
     }
 
-    public String getAvailable_period() {
-        return available_period;
-    }
+//    public String getAvailable_period() {
+//        return available_period;
+//    }
 }

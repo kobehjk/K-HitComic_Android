@@ -25,7 +25,10 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PersistableBundle;
+import android.os.StrictMode;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,6 +54,7 @@ import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
+import com.hippo.ehviewer.client.data.DateTools;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.Token;
 import com.hippo.ehviewer.client.data.UserDataOperation;
@@ -89,6 +93,7 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ProgressView;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
+import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
 
 import org.json.JSONArray;
@@ -97,6 +102,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 
 import cn.bmob.v3.Bmob;
@@ -321,12 +327,62 @@ public final class MainActivity extends StageActivity
                     UserDataOperation.instance().checkToken(kkbDialog.getInputText(), new UserDataOperation.CheckInterFace() {
                         @Override
                         public void checkCallBack(Token token) {
-                            if (token.getToken().isEmpty()){
 
+                            if (token == null){
+                                //验证deviceID
+                                UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
+                                    @Override
+                                    public void checkCallBack(boolean isVip) {
+                                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                                        mainHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressBar.setVisibility(View.INVISIBLE);
+                                                if (APPConfig.isExpire){
+                                                    mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
+                                                }else {
+                                                    mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
+                                                }
+
+                                            }
+                                        });
+                                    }
+                                });
                             }else {
+                                if (token.getToken() == null){
+                                    APPConfig.localToken = null;
+                                    Settings.putString(Settings.TOKEN,"");
+                                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                                    mainHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            mDisplayName.setText("未激活，免费次数:"+APPConfig.globalFreeTime);
+                                        }
+                                    });
+                                }else {
+                                    APPConfig.localToken = token.getToken();
+                                    Settings.putString(Settings.TOKEN,APPConfig.localToken);
+                                    APPConfig.startDate = token.getStart_time();
+                                    APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
+                                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                                    mainHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            progressBar.setVisibility(View.INVISIBLE);
+                                            if (APPConfig.isExpire){
+                                                mDisplayName.setText("激活码已过期，点击更换激活码");
+                                            }else {
+                                                mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
+                                            }
 
+                                        }
+                                    });
+
+                                }
                             }
-                            progressBar.setVisibility(View.INVISIBLE);
+
+
                             kkbDialog.editClose();
                         }
                     });
@@ -382,7 +438,10 @@ public final class MainActivity extends StageActivity
     @Override
     protected void onCreate2(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
-
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         progressBar = (ProgressView) ViewUtils.$$(this,R.id.progressView);
         progressBar.setVisibility(View.INVISIBLE);
         mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
@@ -394,9 +453,7 @@ public final class MainActivity extends StageActivity
         mDisplayName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!APPConfig.isValible){
-                    clickActivationCode();
-                }
+                clickActivationCode();
             }
         });
 
@@ -454,36 +511,114 @@ public final class MainActivity extends StageActivity
 
         initBmob();
 
-        //初始化全局currentuserinfo
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         String DEVICE_ID = tm.getDeviceId();
-        if(DEVICE_ID != null){
-            APPConfig.deviceId = DEVICE_ID;
-        }else {
-            APPConfig.deviceId = "aaaaa";
-            APPConfig.globalFreeTime = 0;
+        if (DEVICE_ID == null || DEVICE_ID.equals("")){
             APPConfig.isValible = false;
-
+            APPConfig.globalFreeTime = 0;
+            UserDataOperation.instance().toast(this,"请到设置里开启软件全部权限方可使用");
             return;
         }
-        Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
 
-        APPConfig.currentUser.setDevice_id(APPConfig.deviceId);
+        String olderDeviceIc = Settings.getString(Settings.DEVICEID,"");
+
+        if (StringUtils.equals(olderDeviceIc,"")){
+            APPConfig.deviceId = DEVICE_ID;
+            Settings.putString(Settings.DEVICEID,DEVICE_ID);
+        }else {
+            if (!StringUtils.equals(olderDeviceIc,DEVICE_ID)) {
+                APPConfig.isValible = false;
+                APPConfig.globalFreeTime = 0;
+            }else {
+                APPConfig.deviceId = DEVICE_ID;
+                Settings.putString(Settings.DEVICEID,DEVICE_ID);
+            }
+        }
 
         String token = Settings.getString(Settings.TOKEN,"");
-        APPConfig.currentUser.setToken(token);
         progressBar.setVisibility(View.VISIBLE);
-        if (!token.equals("")){
-
-            UserDataOperation.instance().checkToken(token, new UserDataOperation.CheckInterFace() {
+        if (StringUtils.equals(token,"")){
+            APPConfig.localToken = null;
+            UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
                 @Override
-                public void checkCallBack(Token token) {
-                    progressBar.setVisibility(View.INVISIBLE);
+                public void checkCallBack(boolean isVip) {
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            if (APPConfig.isExpire){
+                                mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
+                            }else {
+                                mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
+                            }
+
+                        }
+                    });
                 }
             });
         }else {
-            UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId);
+            UserDataOperation.instance().checkToken(token, new UserDataOperation.CheckInterFace() {
+                @Override
+                public void checkCallBack(Token token) {
+
+                    if (token == null){
+                        //验证deviceID
+                        UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
+                            @Override
+                            public void checkCallBack(boolean isVip) {
+                                Handler mainHandler = new Handler(Looper.getMainLooper());
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        if (APPConfig.isExpire){
+                                            mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
+                                        }else {
+                                            mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }else {
+                        if (token.getToken() == null || token.getToken().equals("")){
+                            APPConfig.localToken = null;
+                            Settings.putString(Settings.TOKEN,"");
+                            Handler mainHandler = new Handler(Looper.getMainLooper());
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    mDisplayName.setText("未激活，免费次数:"+APPConfig.globalFreeTime);
+                                }
+                            });
+                        }else {
+                            APPConfig.localToken = token.getToken();
+                            Settings.putString(Settings.TOKEN,APPConfig.localToken);
+                            APPConfig.startDate = token.getStart_time();
+                            APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
+                            Handler mainHandler = new Handler(Looper.getMainLooper());
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    if (APPConfig.isExpire){
+                                        mDisplayName.setText("激活码已过期，点击更换激活码");
+                                    }else {
+                                        mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
+                                    }
+
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
         }
+
 
     }
 

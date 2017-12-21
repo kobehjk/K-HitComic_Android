@@ -761,13 +761,13 @@ public final class GalleryListScene extends BaseScene
         if (null == mHelper || null == mRecyclerView) {
             return false;
         }
-        if (APPConfig.globalFreeTime > 0){
-            APPConfig.globalFreeTime = APPConfig.globalFreeTime-1;
-            Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
-            APPConfig.isValible = true;
-        }else {
-            APPConfig.isValible = false;
-        }
+//        if (APPConfig.globalFreeTime > 0){
+//            APPConfig.globalFreeTime = APPConfig.globalFreeTime-1;
+//            Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
+//            APPConfig.isValible = true;
+//        }else {
+//            APPConfig.isValible = false;
+//        }
 
         GalleryInfo gi = mHelper.getDataAt(position);
         Bundle args = new Bundle();

@@ -62,6 +62,7 @@ import com.hippo.ehviewer.EhDB;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.UrlOpener;
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.ehviewer.client.EhCacheKeyFactory;
 import com.hippo.ehviewer.client.EhClient;
 import com.hippo.ehviewer.client.EhFilter;
@@ -75,6 +76,8 @@ import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.GalleryTagGroup;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
 import com.hippo.ehviewer.client.data.PreviewSet;
+import com.hippo.ehviewer.client.data.UserDataOperation;
+import com.hippo.ehviewer.client.data.UserInfo;
 import com.hippo.ehviewer.client.exception.NoHAtHClientException;
 import com.hippo.ehviewer.client.parser.RateGalleryParser;
 import com.hippo.ehviewer.dao.DownloadInfo;
@@ -1137,6 +1140,19 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 CommonOperations.startDownload(activity, galleryInfo, false);
             }
         } else if (mRead == v) {
+            if (APPConfig.isExpire){
+                APPConfig.globalFreeTime = APPConfig.globalFreeTime-1;
+                UserInfo user = new UserInfo();
+                user.setFree_times(APPConfig.globalFreeTime);
+                user.setDevice_id(APPConfig.deviceId);
+                UserDataOperation.instance().updateUserFreeTimes(user,null);
+                if (APPConfig.globalFreeTime > 0){
+                    APPConfig.isValible = true;
+                }else {
+                    APPConfig.isValible = false;
+                }
+            }
+
             GalleryInfo galleryInfo = null;
             if (mGalleryInfo != null) {
                 galleryInfo = mGalleryInfo;

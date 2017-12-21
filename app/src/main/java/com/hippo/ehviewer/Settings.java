@@ -49,6 +49,7 @@ public class Settings {
     private static EhConfig sEhConfig;
 
     public static final String TOKEN = "token";
+    public static final String DEVICEID = "deviceId";
 
     public static void initialize(Context context) {
         sContext = context.getApplicationContext();

@@ -16,6 +16,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by hejinkun on 2017/12/19.
@@ -31,7 +32,7 @@ public class UserDataOperation {
     }
 
     public interface CheckInterFace{
-        public void checkCallBack(Token token);
+        void checkCallBack(Token token);
     }
 
     public CheckInterFace checkInterFace;
@@ -40,7 +41,8 @@ public class UserDataOperation {
     }
 
     public interface CheckDeviceInterFace{
-        public void checkCallBack();
+        //是VIP才返回true
+        void checkCallBack(boolean isVip);
     }
 
     public CheckDeviceInterFace checkdeviceInterFace;
@@ -59,15 +61,16 @@ public class UserDataOperation {
             @Override
             public void done(List<UserInfo> list, BmobException e) {
                 if(e==null){
+                    UserInfo newUser = new UserInfo();
                     Log.i("bmob","查询成功：");
                     if (list.isEmpty()){
                         APPConfig.globalFreeTime = 3;
                         APPConfig.isValible = true;
-                        APPConfig.currentUser.setDevice_id(deviceId);
-                        APPConfig.currentUser.setFree_times(3);
-                        addUserDeviceId(APPConfig.deviceId);
+                        newUser.setDevice_id(deviceId);
+                        newUser.setFree_times(3);
+                        addUserInfo(newUser);
                     }else {
-                        UserInfo user = list.get(0);
+                        final UserInfo user = list.get(0);
                         if (user.getToken()==null){
                             APPConfig.globalFreeTime = user.getFree_times();
                             if (APPConfig.globalFreeTime > 0){
@@ -75,22 +78,36 @@ public class UserDataOperation {
                             }else {
                                 APPConfig.isValible = false;
                             }
-                            APPConfig.currentUser.setDevice_id(deviceId);
-                            APPConfig.currentUser.setFree_times(APPConfig.globalFreeTime);
-                            updateUser(APPConfig.currentUser,callBack);
+                            APPConfig.deviceId = deviceId;
+                            Settings.putString(Settings.DEVICEID,deviceId);
+                            callBack.checkCallBack(false);
+//                            updateUser(APPConfig.currentUser,callBack);
                         }else {
-                            APPConfig.isValible = true;
-                            Settings.putString(Settings.TOKEN,user.getToken());
+//                            Settings.putString(Settings.TOKEN,user.getToken());
                             checkToken(user.getToken(), new CheckInterFace() {
                                 @Override
                                 public void checkCallBack(Token token) {
-                                    if (token.getToken().isEmpty()){
-
+                                    if (token.getToken() == null || token.getToken().equals("")){
+                                        APPConfig.globalFreeTime = user.getFree_times();
+                                        if (APPConfig.globalFreeTime > 0){
+                                            APPConfig.isValible = true;
+                                        }else {
+                                            APPConfig.isValible = false;
+                                        }
+                                        APPConfig.deviceId = deviceId;
+                                        Settings.putString(Settings.DEVICEID,deviceId);
+                                        callBack.checkCallBack(false);
+                                    }else {
+                                        APPConfig.isValible = true;
+                                        APPConfig.isExpire = false;
+                                        APPConfig.localToken = token.getToken();
+                                        Settings.putString(Settings.TOKEN,token.getToken());
+                                        callBack.checkCallBack(true);
                                     }
-                                    updateUser(APPConfig.currentUser,callBack);
+//                                    updateUser(APPConfig.currentUser,callBack);
                                 }
                             });
-                            //更新激活时间
+
 
                         }
 
@@ -100,7 +117,7 @@ public class UserDataOperation {
                     APPConfig.globalFreeTime = 0;
                     APPConfig.isValible = false;
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
-                    callBack.checkCallBack();
+                    callBack.checkCallBack(false);
                 }
                 Settings.putBoolean("isValible",APPConfig.isValible);
                 Settings.putInt(APPConfig.deviceId,APPConfig.globalFreeTime);
@@ -109,10 +126,7 @@ public class UserDataOperation {
         });
     }
 
-    public void addUserDeviceId(String deivceId){
-        UserInfo user = new UserInfo();
-        user.setDevice_id(deivceId);
-        user.setFree_times(3);
+    public void addUserInfo(UserInfo user){
         user.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
@@ -121,33 +135,88 @@ public class UserDataOperation {
                 }else{
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
                 }
-                checkdeviceInterFace.checkCallBack();
+                checkdeviceInterFace.checkCallBack(false);
             }
         });
     }
 
     public void updateUser(final UserInfo userInfo, final CheckDeviceInterFace callBack){
-        userInfo.save(new SaveListener<String>() {
+
+        BmobQuery<UserInfo> query =new BmobQuery<UserInfo>();
+        query.addWhereEqualTo("deviceid", userInfo.getDevice_id());
+        query.findObjects(new FindListener<UserInfo>() {
             @Override
-            public void done(String s, BmobException e) {
-                if(e==null){
-                    toast(EhApplication.getContext(),"更新数据成功");
-                    Log.i("bmob","更新数据成功：" + s);
-                }else{
-                    toast(EhApplication.getContext(),"更新数据失败，请重新激活");
-                    APPConfig.currentToken = new Token();
-                    APPConfig.isValible = false;
-                    APPConfig.globalFreeTime = 0;
-                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+            public void done(List<UserInfo> list, BmobException e) {
+                if (e == null){
+                    if (!list.isEmpty()){
+                        UserInfo findInfo = list.get(0);
+                        findInfo.setDevice_id(userInfo.getDevice_id());
+                        findInfo.setStart_time(userInfo.getStart_time());
+                        findInfo.setToken(userInfo.getToken());
+                        findInfo.setFree_times(userInfo.getFree_times());
+                        findInfo.update(findInfo.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    toast(EhApplication.getContext(),"更新数据成功");
+                                    Log.i("bmob","更新数据成功：" );
+                                }else{
+                                    toast(EhApplication.getContext(),"更新数据失败，请重新激活");
+                                    APPConfig.currentToken = new Token();
+                                    APPConfig.isValible = false;
+                                    APPConfig.globalFreeTime = 0;
+                                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                                }
+                                if (callBack != null){
+                                    callBack.checkCallBack(false);
+                                }
+                            }
+                        });
+                    }
                 }
-                callBack.checkCallBack();
             }
         });
     }
 
-    public void checkToken(final String token,CheckInterFace callback){
+    public void updateUserFreeTimes(final UserInfo userInfo, final CheckDeviceInterFace callBack){
 
-        setCheckInterFace(callback);
+        BmobQuery<UserInfo> query =new BmobQuery<UserInfo>();
+        query.addWhereEqualTo("device_id", userInfo.getDevice_id());
+        query.findObjects(new FindListener<UserInfo>() {
+            @Override
+            public void done(List<UserInfo> list, BmobException e) {
+                if (e == null){
+                    if (!list.isEmpty()){
+                        UserInfo findInfo = list.get(0);
+                        findInfo.setFree_times(userInfo.getFree_times());
+                        findInfo.update(findInfo.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    toast(EhApplication.getContext(),"更新数据成功");
+                                    Log.i("bmob","更新数据成功：" );
+                                }else{
+                                    toast(EhApplication.getContext(),"更新数据失败，请重新激活");
+                                    APPConfig.currentToken = new Token();
+                                    APPConfig.isValible = false;
+                                    APPConfig.globalFreeTime = 0;
+                                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                                }
+                                if (callBack != null){
+                                    callBack.checkCallBack(false);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+
+    public void checkToken(final String token,final CheckInterFace callback){
+
+//        setCheckInterFace(callback);
 
         BmobQuery<Token> query =new BmobQuery<Token>();
         query.addWhereEqualTo("token", token);
@@ -155,67 +224,108 @@ public class UserDataOperation {
             @Override
             public void done(List<Token> list, BmobException e) {
                 if (e == null){
-                    //一起同步user
+                    Token token1 = new Token();
                     if (list.isEmpty()){
                         APPConfig.isValible = false;
                         APPConfig.globalFreeTime = 0;
-                        APPConfig.currentToken = new Token();
                         toast(EhApplication.getContext(),"激活码无效");
                     }else {
                         Token tokenInfo = list.get(0);
                         String type = tokenInfo.getAvailable_period();
+
                         Date startDate = tokenInfo.getStart_time();
                         if (startDate == null){
-                            tokenInfo.setStart_time(new Date());
+                            token1.setStart_time(new Date());
+                        }else {
+                            token1.setStart_time(startDate);
                         }
 
-                        APPConfig.currentToken.setStart_time(startDate);
-                        APPConfig.currentToken.setToken(token);
-                        APPConfig.currentToken.setAvailable_period(type);
+                        token1.setToken(token);
+                        token1.setAvailable_period(type);
 
                         String device = tokenInfo.getDevice_id();
-                        if (device == null){
-                            APPConfig.currentToken.setDevice_id(APPConfig.deviceId);
-                            tokenInfo.setStart_time(new Date());
+                        if (device == null || device.equals("")){
+                            //新激活
+                            APPConfig.isExpire = false;
+                            APPConfig.isValible = true;
+                            token1.setDevice_id(APPConfig.deviceId);
+                            updateToken(token1);
+                            UserInfo updateUser = new UserInfo();
+//                            updateUser.setAvailable_period(token1.getAvailable_period());
+                            updateUser.setDevice_id(APPConfig.deviceId);
+                            updateUser.setStart_time(DateTools.getWebsiteDatetime());
+                            updateUser.setToken(token1.getToken());
+                            updateUser(updateUser,null);
                         }else {
                             if (device.equals(APPConfig.deviceId)){
-                                APPConfig.currentToken.setDevice_id(device);
-                                updateToken(APPConfig.currentToken);
+                                token1.setDevice_id(device);
+                                APPConfig.isExpire = DateTools.ifExpire(token1.getStart_time(),token1.getAvailable_period());
+                                if (APPConfig.isExpire){
+                                    APPConfig.isValible = false;
+                                    APPConfig.globalFreeTime = 0;
+                                    token1 = new Token();
+                                }else {
+                                    APPConfig.isValible = true;
+                                    APPConfig.globalFreeTime = 0;
+                                }
                             }else {
-                                APPConfig.currentToken = new Token();
+                                APPConfig.isValible = false;
+                                APPConfig.globalFreeTime = 0;
+                                token1 = new Token();
+                                toast(EhApplication.getContext(),"激活码已激活但不与设备匹配");
                             }
                         }
-
-
                     }
-
+                    callback.checkCallBack(token1);
                 }else {
                     APPConfig.globalFreeTime = 0;
                     APPConfig.isValible = false;
-                    APPConfig.globalFreeTime = 0;
                     APPConfig.currentToken = new Token();
-                    toast(EhApplication.getContext(),"激活码无效");
+                    toast(EhApplication.getContext(),"网络错误，请重新验证");
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                    callback.checkCallBack(null);
                 }
-                Settings.putString(Settings.TOKEN,APPConfig.currentToken.getToken());
-                checkInterFace.checkCallBack(APPConfig.currentToken);
             }
         });
 
     }
 
     public void updateToken(final Token tokenInfo){
-        tokenInfo.save(new SaveListener<String>() {
+
+        BmobQuery<Token> query =new BmobQuery<Token>();
+        query.addWhereEqualTo("token", tokenInfo.getToken());
+        query.findObjects(new FindListener<Token>() {
             @Override
-            public void done(String s, BmobException e) {
-                if(e==null){
-                    toast(EhApplication.getContext(),"更新数据成功");
-                    Log.i("bmob","更新数据成功：" + s);
-                }else{
+            public void done(List<Token> list, BmobException e) {
+                if (e == null){
+                    if (!list.isEmpty()){
+                        Token findInfo = list.get(0);
+                        findInfo.setDevice_id(tokenInfo.getDevice_id());
+                        findInfo.setStart_time(tokenInfo.getStart_time());
+                        findInfo.update(findInfo.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    toast(EhApplication.getContext(),"更新数据成功");
+                                    Log.i("bmob","更新数据成功：" );
+                                }else{
+                                    toast(EhApplication.getContext(),"更新数据失败，请重新激活");
+                                    APPConfig.isValible = false;
+                                    APPConfig.globalFreeTime = 0;
+                                    APPConfig.isExpire = true;
+                                    APPConfig.localToken = null;
+                                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                                }
+
+                            }
+                        });
+                    }
+                }else {
                     toast(EhApplication.getContext(),"更新数据失败，请重新激活");
-                    APPConfig.currentToken = new Token();
                     APPConfig.isValible = false;
                     APPConfig.globalFreeTime = 0;
+                    APPConfig.isExpire = true;
+                    APPConfig.localToken = null;
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
                 }
             }
