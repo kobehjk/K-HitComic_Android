@@ -3,6 +3,7 @@ package com.hippo.ehviewer.client.data;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.hippo.ehviewer.client.APPConfig;
 import com.hippo.yorozuya.StringUtils;
 
 import java.net.URL;
@@ -35,8 +36,9 @@ public class DateTools {
     public static Date getEndDateBy(Date startDate,String type){
         if (type.equals("m")){
             Calendar cal = Calendar.getInstance();
-            cal.setTime(getWebsiteDatetime());
+            cal.setTime(startDate);
             cal.add(Calendar.MONTH, +1);
+            APPConfig.endDate = cal.getTime();
 //            Log.d("kobehjk", "getEndDateBy: "+ date);
             return cal.getTime();
         }else {
@@ -69,6 +71,16 @@ public class DateTools {
 
         }
 
+        public static Date stringToDate(String time){
+            Date tempDate = null;
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            try {
+                tempDate = sdf1.parse(time);
+            }catch (Exception e1){
+
+            }
+            return tempDate;
+        }
 
 
 }

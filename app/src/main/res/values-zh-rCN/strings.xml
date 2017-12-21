@@ -577,7 +577,7 @@
     <string name="guide_gallery_right">翻页</string>
     <string name="guide_gallery_menu">菜单</string>
     <string name="guide_gallery_progress">进度条</string>
-    <string name="guide_gallery_long_click">长按打开页面菜单</string>
+    <string name="guide_gallery_long_click">激活后长按打开页面菜单</string>
 
     <!-- Readable Time -->
     <string name="from_the_future">来自未来</string>

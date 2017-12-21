@@ -363,7 +363,7 @@ public final class MainActivity extends StageActivity
                                 }else {
                                     APPConfig.localToken = token.getToken();
                                     Settings.putString(Settings.TOKEN,APPConfig.localToken);
-                                    APPConfig.startDate = token.getStart_time();
+                                    APPConfig.startDate = DateTools.stringToDate(token.getStart_time());
                                     APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
                                     Handler mainHandler = new Handler(Looper.getMainLooper());
                                     mainHandler.post(new Runnable() {
@@ -591,13 +591,13 @@ public final class MainActivity extends StageActivity
                                 @Override
                                 public void run() {
                                     progressBar.setVisibility(View.INVISIBLE);
-                                    mDisplayName.setText("未激活，免费次数:"+APPConfig.globalFreeTime);
+                                    mDisplayName.setText("未激活或已过期，免费次数:"+APPConfig.globalFreeTime);
                                 }
                             });
                         }else {
                             APPConfig.localToken = token.getToken();
                             Settings.putString(Settings.TOKEN,APPConfig.localToken);
-                            APPConfig.startDate = token.getStart_time();
+                            APPConfig.startDate = DateTools.stringToDate(token.getStart_time());
                             APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
                             Handler mainHandler = new Handler(Looper.getMainLooper());
                             mainHandler.post(new Runnable() {

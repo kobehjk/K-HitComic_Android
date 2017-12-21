@@ -3,6 +3,7 @@ package com.hippo.ehviewer.client.data;
 import java.util.Date;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobDate;
 
 /**
  * Created by hejinkun on 2017/12/19.
@@ -10,7 +11,7 @@ import cn.bmob.v3.BmobObject;
 
 public class UserInfo extends BmobObject {
     private String token;
-    private Date start_time;
+//    private BmobDate start_time;
     private int free_times;
     private String device_id;
 //    private String available_period;
@@ -20,9 +21,9 @@ public class UserInfo extends BmobObject {
         this.token = token;
     }
 
-    public void setStart_time(Date start_time) {
-        this.start_time = start_time;
-    }
+//    public void setStart_time(BmobDate start_time) {
+//        this.start_time = start_time;
+//    }
 
     public void setFree_times(int free_times) {
         this.free_times = free_times;
@@ -40,9 +41,9 @@ public class UserInfo extends BmobObject {
         return token;
     }
 
-    public Date getStart_time() {
-        return start_time;
-    }
+//    public BmobDate getStart_time() {
+//        return start_time;
+//    }
 
     public int getFree_times() {
         return free_times;

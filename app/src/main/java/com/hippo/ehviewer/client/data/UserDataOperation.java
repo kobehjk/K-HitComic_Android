@@ -8,10 +8,13 @@ import com.hippo.ehviewer.EhApplication;
 import com.hippo.ehviewer.Settings;
 import com.hippo.ehviewer.client.APPConfig;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
@@ -143,7 +146,7 @@ public class UserDataOperation {
     public void updateUser(final UserInfo userInfo, final CheckDeviceInterFace callBack){
 
         BmobQuery<UserInfo> query =new BmobQuery<UserInfo>();
-        query.addWhereEqualTo("deviceid", userInfo.getDevice_id());
+        query.addWhereEqualTo("device_id", userInfo.getDevice_id());
         query.findObjects(new FindListener<UserInfo>() {
             @Override
             public void done(List<UserInfo> list, BmobException e) {
@@ -151,7 +154,7 @@ public class UserDataOperation {
                     if (!list.isEmpty()){
                         UserInfo findInfo = list.get(0);
                         findInfo.setDevice_id(userInfo.getDevice_id());
-                        findInfo.setStart_time(userInfo.getStart_time());
+//                        findInfo.setStart_time(userInfo.getStart_time());
                         findInfo.setToken(userInfo.getToken());
                         findInfo.setFree_times(userInfo.getFree_times());
                         findInfo.update(findInfo.getObjectId(), new UpdateListener() {
@@ -213,6 +216,41 @@ public class UserDataOperation {
         });
     }
 
+    public void updateUserToken(final UserInfo userInfo, final CheckDeviceInterFace callBack){
+
+        BmobQuery<UserInfo> query =new BmobQuery<UserInfo>();
+        query.addWhereEqualTo("device_id", userInfo.getDevice_id());
+        query.findObjects(new FindListener<UserInfo>() {
+            @Override
+            public void done(List<UserInfo> list, BmobException e) {
+                if (e == null){
+                    if (!list.isEmpty()){
+                        UserInfo findInfo = list.get(0);
+                        findInfo.setToken(userInfo.getToken());
+                        findInfo.update(findInfo.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    toast(EhApplication.getContext(),"更新数据成功");
+                                    Log.i("bmob","更新数据成功：" );
+                                }else{
+                                    toast(EhApplication.getContext(),"更新数据失败，请重新激活");
+                                    APPConfig.currentToken = new Token();
+                                    APPConfig.isValible = false;
+                                    APPConfig.globalFreeTime = 0;
+                                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                                }
+                                if (callBack != null){
+                                    callBack.checkCallBack(false);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
 
     public void checkToken(final String token,final CheckInterFace callback){
 
@@ -233,9 +271,9 @@ public class UserDataOperation {
                         Token tokenInfo = list.get(0);
                         String type = tokenInfo.getAvailable_period();
 
-                        Date startDate = tokenInfo.getStart_time();
-                        if (startDate == null){
-                            token1.setStart_time(new Date());
+                        String startDate = tokenInfo.getStart_time();
+                        if (startDate == null || startDate.equals("")){
+                            token1.setStart_time(DateTools.dateToString(DateTools.getWebsiteDatetime()));
                         }else {
                             token1.setStart_time(startDate);
                         }
@@ -249,17 +287,18 @@ public class UserDataOperation {
                             APPConfig.isExpire = false;
                             APPConfig.isValible = true;
                             token1.setDevice_id(APPConfig.deviceId);
-                            updateToken(token1);
+                            updateTokens(token1);
                             UserInfo updateUser = new UserInfo();
 //                            updateUser.setAvailable_period(token1.getAvailable_period());
                             updateUser.setDevice_id(APPConfig.deviceId);
-                            updateUser.setStart_time(DateTools.getWebsiteDatetime());
+//                            updateUser.setStart_time(new BmobDate(DateTools.getWebsiteDatetime()));
                             updateUser.setToken(token1.getToken());
                             updateUser(updateUser,null);
                         }else {
                             if (device.equals(APPConfig.deviceId)){
                                 token1.setDevice_id(device);
-                                APPConfig.isExpire = DateTools.ifExpire(token1.getStart_time(),token1.getAvailable_period());
+
+                                APPConfig.isExpire = DateTools.ifExpire(DateTools.stringToDate(token1.getStart_time()),token1.getAvailable_period());
                                 if (APPConfig.isExpire){
                                     APPConfig.isValible = false;
                                     APPConfig.globalFreeTime = 0;
@@ -267,6 +306,8 @@ public class UserDataOperation {
                                 }else {
                                     APPConfig.isValible = true;
                                     APPConfig.globalFreeTime = 0;
+                                    updateTokens(token1);
+//                                    APPConfig.endDate = DateTools.getEndDateBy(tempDate,tokenInfo.getAvailable_period());
                                 }
                             }else {
                                 APPConfig.isValible = false;
@@ -290,7 +331,7 @@ public class UserDataOperation {
 
     }
 
-    public void updateToken(final Token tokenInfo){
+    public void updateTokens(final Token tokenInfo){
 
         BmobQuery<Token> query =new BmobQuery<Token>();
         query.addWhereEqualTo("token", tokenInfo.getToken());

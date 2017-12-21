@@ -1140,7 +1140,7 @@ public class GalleryDetailScene extends BaseScene implements View.OnClickListene
                 CommonOperations.startDownload(activity, galleryInfo, false);
             }
         } else if (mRead == v) {
-            if (APPConfig.isExpire){
+            if (APPConfig.isExpire && APPConfig.globalFreeTime>0){
                 APPConfig.globalFreeTime = APPConfig.globalFreeTime-1;
                 UserInfo user = new UserInfo();
                 user.setFree_times(APPConfig.globalFreeTime);

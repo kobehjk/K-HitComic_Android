@@ -3,6 +3,7 @@ package com.hippo.ehviewer.client;
 import com.hippo.ehviewer.client.data.Token;
 import com.hippo.ehviewer.client.data.UserInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ public class APPConfig {
     public static Date endDate;
     public static String localToken;
     public static boolean isExpire = true;
-
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     //BMOB
     public static String bmobApplicationId = "c1c77286821661cdc9673e73ec97a6eb";
 
