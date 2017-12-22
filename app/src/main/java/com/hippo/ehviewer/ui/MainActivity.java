@@ -136,7 +136,7 @@ public final class MainActivity extends StageActivity
     private int mNavCheckedItem = 0;
 
     static {
-        APPConfig.isValible = true;
+        APPConfig.isValible = false;
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -842,6 +842,9 @@ public final class MainActivity extends StageActivity
 //            startScene(new Announcer(DownloadsScene.class));
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+        } else if (id == R.id.nav_purchase) {
+            Intent intent = new Intent(this, PurchaseActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SETTINGS);
         }
 

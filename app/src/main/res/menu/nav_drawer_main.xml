@@ -36,17 +36,22 @@
         <item
             android:id="@+id/nav_history"
             android:title="@string/history"
-            android:icon="@drawable/v_history_black_x24"/>
+            android:icon="@drawable/tong"/>
 
         <item
             android:id="@+id/nav_downloads"
             android:title="@string/downloads"
-            android:icon="@drawable/v_download_black_x24"/>
+            android:icon="@drawable/aborad"/>
 
         <item
             android:id="@+id/nav_settings"
             android:title="@string/settings"
             android:icon="@drawable/v_settings_black_x24"/>
+
+        <item
+            android:id="@+id/nav_purchase"
+            android:title="@string/purchase"
+            android:icon="@drawable/purchase"/>
 
         <item
             android:id="@+id/nav_stub"

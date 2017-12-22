@@ -41,8 +41,8 @@
     <color name="background_light">#fffafafa</color>
 
     <color name="red_500">#fff44336</color>
-    <color name="teal_500">#ff009688</color>
-    <color name="teal_700">#ff00796b</color>
+    <color name="teal_500">#ff00afd7</color>
+    <color name="teal_700">#ff008fc7</color>
     <color name="purple_500">#ff9c27b0</color>
     <color name="purple_a200">#ffe040fb</color>
     <color name="purple_a400">#ffd500f9</color>

@@ -41,6 +41,12 @@ public class DateTools {
             APPConfig.endDate = cal.getTime();
 //            Log.d("kobehjk", "getEndDateBy: "+ date);
             return cal.getTime();
+        }else if (type.equals("e")) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.MONTH, +100);
+            APPConfig.endDate = cal.getTime();
+            return cal.getTime();
         }else {
             return null;
         }
