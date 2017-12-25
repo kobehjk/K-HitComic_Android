@@ -113,6 +113,8 @@ public final class MainActivity extends StageActivity
 
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
+    private static final int PERMISSION_REQUEST_READ_PHONESTATE_STORAGE = 0;
+
     private static final int REQUEST_CODE_SETTINGS = 0;
 
     private static final String KEY_NAV_CHECKED_ITEM = "nav_checked_item";
@@ -506,9 +508,14 @@ public final class MainActivity extends StageActivity
 
     private void onInit() {
         // Check permission
-        PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                getString(R.string.write_rationale), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+        if (PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE,
+                "赋予权限才可使用软件", PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)){
+            initBmobAndCheckID();
+        }
 
+    }
+
+    private void initBmobAndCheckID(){
         initBmob();
 
         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
@@ -618,8 +625,6 @@ public final class MainActivity extends StageActivity
                 }
             });
         }
-
-
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -653,9 +658,15 @@ public final class MainActivity extends StageActivity
     @Override
     public void onRequestPermissionsResult(int requestCode,
             @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
+        if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE || requestCode == PERMISSION_REQUEST_READ_PHONESTATE_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, R.string.you_rejected_me, Toast.LENGTH_SHORT).show();
+            }
+            if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "您拒绝了我的请求，程序将退出", Toast.LENGTH_SHORT).show();
+
+            }else {
+                initBmobAndCheckID();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -844,8 +855,23 @@ public final class MainActivity extends StageActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SETTINGS);
         } else if (id == R.id.nav_purchase) {
-            Intent intent = new Intent(this, PurchaseActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+            UserDataOperation.instance().checkAviailable(new UserDataOperation.CheckAvailable() {
+                @Override
+                public void isAvailable(boolean isavailable) {
+                    if (isavailable){
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(MainActivity.this, PurchaseActivity.class);
+                                startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+                            }
+                        });
+
+                    }
+                }
+            });
+
         }
 
         if (id != R.id.nav_stub && mDrawerLayout != null) {

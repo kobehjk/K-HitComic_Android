@@ -28,33 +28,38 @@ public class PermissionRequester {
      * @return true for there no need to request, do your work it now.
      * false for do in {@link android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback#onRequestPermissionsResult(int, String[], int[])}
      */
-    public static boolean request(final Activity activity, final String permission, String rationale, final int requestCode) {
+    public static boolean request(final Activity activity, final String permission,final String permission1, String rationale, final int requestCode) {
         if (!(activity instanceof ActivityCompat.OnRequestPermissionsResultCallback)) {
             throw new IllegalStateException("The Activity must implement ActivityCompat.OnRequestPermissionsResultCallback");
         }
 
         if (ActivityCompat.checkSelfPermission(activity, permission)
+                == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, permission1)
                 == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-            new AlertDialog.Builder(activity)
-                    .setMessage(rationale)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(activity,
-                                    new String[]{permission},
-                                    requestCode);
-                        }
-                    }).setNegativeButton(android.R.string.cancel, null)
-                    .show();
-        } else {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{permission},
-                    requestCode);
-        }
+        ActivityCompat.requestPermissions(activity,
+                new String[]{permission,permission1},
+                requestCode);
+
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+//            new AlertDialog.Builder(activity)
+//                    .setMessage(rationale)
+//                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            ActivityCompat.requestPermissions(activity,
+//                                    new String[]{permission},
+//                                    requestCode);
+//                        }
+//                    }).setNegativeButton(android.R.string.cancel, null)
+//                    .show();
+//        } else {
+//            ActivityCompat.requestPermissions(activity,
+//                    new String[]{permission,permission1},
+//                    requestCode);
+//        }
 
         return false;
     }

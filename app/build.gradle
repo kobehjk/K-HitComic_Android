@@ -3,6 +3,10 @@ import com.android.build.gradle.internal.tasks.DefaultAndroidTask
 apply plugin: 'com.android.application'
 apply plugin: 'android-chinese-string'
 
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
@@ -17,6 +21,7 @@ android {
         resConfigs "zh", "zh-rCN", "zh-rHK", "zh-rTW",
                 "es"
         useLibrary 'org.apache.http.legacy'
+        multiDexEnabled true
     }
 
     lintOptions {
@@ -33,6 +38,7 @@ android {
     sourceSets {
         main {
             java.srcDirs += 'src/main/java-gen'
+            main.jniLibs.srcDirs = ['libs']
         }
     }
 }
@@ -67,7 +73,7 @@ dependencies {
     compile 'com.github.seven332:glview-image:0.1.0'
     compile 'com.github.seven332:hotspot:0.1.0'
     compile 'com.github.seven332:image:0.1.12'
-//    compile 'com.github.seven332:okhttp:3.5.0'
+    compile 'com.github.seven332:okhttp:3.5.0'
     compile 'com.github.seven332:refreshlayout:0.1.0'
     compile 'com.github.seven332:ripple:0.1.2'
     compile 'com.github.seven332:streampipe:0.1.0'
@@ -80,7 +86,8 @@ dependencies {
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
     compile 'org.greenrobot:greendao:2.2.0'
     compile 'org.jsoup:jsoup:1.9.2'
+
     testCompile 'junit:junit:4.12'
-    compile 'cn.bmob.android:bmob-sdk:3.5.5'
-    compile 'cn.bmob.android:http-legacy:1.0'
+//    compile 'cn.bmob.android:bmob-sdk:3.5.5'
+//    compile 'cn.bmob.android:http-legacy:1.0'
 }

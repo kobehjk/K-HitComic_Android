@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="购买须知"
+        android:text="激活须知"
         android:textSize="@dimen/text_large"
         android:textAlignment="center"/>
 
@@ -17,7 +17,8 @@
         android:padding="20dp"
         android:text="一月激活码：5 RMB"
         android:textSize="@dimen/text_medium"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:visibility="gone"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -25,13 +26,14 @@
         android:padding="20dp"
         android:text="永久激活码：39 RMB"
         android:textSize="@dimen/text_medium"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:visibility="gone"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="特殊原因购买请加微信：kobehjkjay"
+        android:text="索要激活码请加微信：kobehjkjay"
         android:textSize="@dimen/text_medium"
         android:textAlignment="center"/>
 

@@ -53,7 +53,10 @@ public class UserDataOperation {
         this.checkdeviceInterFace = checkdeviceInterFace;
     }
 
-
+    public interface CheckAvailable{
+        //是VIP才返回true
+        void isAvailable(boolean isavailable);
+    }
 
     public void checkByDeviceId(final String deviceId, final CheckDeviceInterFace callBack){
 
@@ -369,6 +372,30 @@ public class UserDataOperation {
                     APPConfig.localToken = null;
                     Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
                 }
+            }
+        });
+    }
+
+
+    public void checkAviailable(final CheckAvailable callBack){
+//        esXpQQQY
+        BmobQuery<NetSwitch> query =new BmobQuery<NetSwitch>();
+        query.findObjects(new FindListener<NetSwitch>() {
+            @Override
+            public void done(List<NetSwitch> list, BmobException e) {
+                if(e==null){
+                    NetSwitch newUser = new NetSwitch();
+                    Log.i("bmob","查询成功：");
+                    if (list.isEmpty()){
+                        callBack.isAvailable(false);
+                    }else {
+                        final NetSwitch user = list.get(0);
+                        callBack.isAvailable(user.available);
+                    }
+                }else{
+                    callBack.isAvailable(false);
+                }
+
             }
         });
     }
