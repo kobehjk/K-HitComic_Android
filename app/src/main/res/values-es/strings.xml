@@ -620,7 +620,7 @@
     <string name="error_something_wrong_happened">Sucedio algo malo</string>
     <string name="dialog_archive_title">H@H Downloader</string>
 
-    <string name="purchase_dialog">please purchase code to unlock rest</string>
+    <string name="purchase_dialog">please download the DirtyComicPro to read the rest</string>
     <string name="settings_about_warning">tips</string>
     <string name="enable_fingerprint">Also allow unlock with fingerprint</string>
 
