@@ -17,7 +17,7 @@ import java.util.TimeZone;
 import static android.R.attr.format;
 
 /**
- * Created by hejinkun on 2017/12/19.
+ * Created by asdasd on 2017/12/19.
  */
 
 public class DateTools {
@@ -45,6 +45,12 @@ public class DateTools {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.MONTH, +100);
+            APPConfig.endDate = cal.getTime();
+            return cal.getTime();
+        }else if (type.equals("h")) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.MONTH, +6);
             APPConfig.endDate = cal.getTime();
             return cal.getTime();
         }else {

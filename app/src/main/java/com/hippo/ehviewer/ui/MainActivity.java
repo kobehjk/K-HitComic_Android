@@ -444,46 +444,64 @@ public final class MainActivity extends StageActivity
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        final Bundle finalsavedInstanceState = savedInstanceState;
         progressBar = (ProgressView) ViewUtils.$$(this,R.id.progressView);
-        progressBar.setVisibility(View.INVISIBLE);
-        mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(this, R.id.draw_view);
-        mNavView = (NavigationView) ViewUtils.$$(this, R.id.nav_view);
-//        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
-        View headerLayout = mNavView.getHeaderView(0);
-        mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
-        mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
-        mDisplayName.setOnClickListener(new View.OnClickListener() {
+        progressBar.setVisibility(View.VISIBLE);
+        onInit();
+        UserDataOperation.instance().checkAviailable(new UserDataOperation.CheckAvailable() {
             @Override
-            public void onClick(View view) {
-                clickActivationCode();
+            public void isAvailable(boolean isavailable) {
+                if (isavailable){
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            mDrawerLayout = (EhDrawerLayout) ViewUtils.$$(MainActivity.this, R.id.draw_view);
+                            mNavView = (NavigationView) ViewUtils.$$(MainActivity.this, R.id.nav_view);
+//        mRightDrawer = (FrameLayout) ViewUtils.$$(this, R.id.right_drawer);
+                            View headerLayout = mNavView.getHeaderView(0);
+                            mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
+                            mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
+                            mDisplayName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    clickActivationCode();
+                                }
+                            });
+
+
+                            mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(MainActivity.this, R.attr.colorPrimaryDark));
+                            // Pre-L need shadow drawable
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                                mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
+                                mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
+                            }
+
+                            updateProfile();
+
+                            if (mNavView != null) {
+                                mNavView.setNavigationItemSelectedListener(MainActivity.this);
+                            }
+
+                            if (finalsavedInstanceState == null) {
+
+//                                CommonOperations.checkUpdate(this, false);
+//                                checkDownloadLocation();
+                                if (Settings.getCellularNetworkWarning()) {
+                                    checkCellularNetwork();
+                                }
+                            } else {
+                                onRestore(finalsavedInstanceState);
+                            }
+
+                        }
+                    });
+                }else {
+                    return;
+                }
             }
         });
-
-
-        mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
-        // Pre-L need shadow drawable
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_left, Gravity.LEFT);
-            mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_right, Gravity.RIGHT);
-        }
-
-        updateProfile();
-
-        if (mNavView != null) {
-            mNavView.setNavigationItemSelectedListener(this);
-        }
-
-        if (savedInstanceState == null) {
-            onInit();
-            CommonOperations.checkUpdate(this, false);
-            checkDownloadLocation();
-            if (Settings.getCellularNetworkWarning()) {
-                checkCellularNetwork();
-            }
-        } else {
-            onRestore(savedInstanceState);
-        }
-
 
     }
 
@@ -854,25 +872,26 @@ public final class MainActivity extends StageActivity
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SETTINGS);
-        } else if (id == R.id.nav_purchase) {
-            UserDataOperation.instance().checkAviailable(new UserDataOperation.CheckAvailable() {
-                @Override
-                public void isAvailable(boolean isavailable) {
-                    if (isavailable){
-                        Handler mainHandler = new Handler(Looper.getMainLooper());
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(MainActivity.this, PurchaseActivity.class);
-                                startActivityForResult(intent, REQUEST_CODE_SETTINGS);
-                            }
-                        });
-
-                    }
-                }
-            });
-
         }
+//        else if (id == R.id.nav_purchase) {
+//            UserDataOperation.instance().checkAviailable(new UserDataOperation.CheckAvailable() {
+//                @Override
+//                public void isAvailable(boolean isavailable) {
+//                    if (isavailable){
+//                        Handler mainHandler = new Handler(Looper.getMainLooper());
+//                        mainHandler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Intent intent = new Intent(MainActivity.this, PurchaseActivity.class);
+//                                startActivityForResult(intent, REQUEST_CODE_SETTINGS);
+//                            }
+//                        });
+//
+//                    }
+//                }
+//            });
+//
+//        }
 
         if (id != R.id.nav_stub && mDrawerLayout != null) {
             mDrawerLayout.closeDrawers();

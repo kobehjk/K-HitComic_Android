@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 
 /**
- * Created by hejinkun on 2017/12/20.
+ * Created by asdasd on 2017/12/20.
  */
 
 public final class GScreenAdapter {

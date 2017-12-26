@@ -25,7 +25,7 @@ import com.hippo.yorozuya.StringUtils;
 import java.util.Date;
 
 /**
- * Created by hejinkun on 2017/12/20.
+ * Created by asdsad on 2017/12/20.
  */
 
 public class CommonDialog extends Dialog{

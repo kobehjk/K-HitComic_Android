@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="索要激活码请加微信：kobehjkjay"
+        android:text="索要激活码请"
         android:textSize="@dimen/text_medium"
         android:textAlignment="center"/>
 

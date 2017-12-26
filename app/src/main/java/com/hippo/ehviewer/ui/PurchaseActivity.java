@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import com.hippo.ehviewer.R;
 
 /**
- * Created by hejinkun on 2017/12/22.
+ * Created by asdsad on 2017/12/22.
  */
 
 public class PurchaseActivity extends EhActivity {

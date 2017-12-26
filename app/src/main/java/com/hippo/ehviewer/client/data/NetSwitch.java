@@ -1,7 +1,7 @@
 package com.hippo.ehviewer.client.data;
 
-/**
- * Created by hejinkun on 2017/12/25.
+/**asdasd
+ * Created by  on 2017/12/25.
  */
 
 public class NetSwitch {

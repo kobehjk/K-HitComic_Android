@@ -6,7 +6,7 @@ import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
 
 /**
- * Created by hejinkun on 2017/12/19.
+ * Created by asdsad on 2017/12/19.
  */
 
 public class UserInfo extends BmobObject {

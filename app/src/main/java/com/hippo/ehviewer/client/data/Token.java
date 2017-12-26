@@ -6,7 +6,7 @@ import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobDate;
 
 /**
- * Created by hejinkun on 2017/12/19.
+ * Created by sadasd on 2017/12/19.
  */
 
 public class Token extends BmobObject {

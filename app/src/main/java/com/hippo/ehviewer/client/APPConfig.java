@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by hejinkun on 2017/12/17.
+ * Created by sadas on 2017/12/17.
  */
 
 public class APPConfig {

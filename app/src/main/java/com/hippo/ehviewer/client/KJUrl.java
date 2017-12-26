@@ -1,7 +1,7 @@
 package com.hippo.ehviewer.client;
 
 /**
- * Created by hejinkun on 2017/12/12.
+ * Created by sadasd on 2017/12/12.
  */
 
 public class KJUrl {
