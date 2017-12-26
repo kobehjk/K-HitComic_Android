@@ -19,6 +19,4 @@ public class APPConfig {
     //BMOB
     public static String bmobApplicationId = "c1c77286821661cdc9673e73ec97a6eb";
 
-    public static UserInfo currentUser = new UserInfo();
-    public static Token currentToken = new Token();
 }

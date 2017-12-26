@@ -49,11 +49,6 @@
             android:icon="@drawable/v_settings_black_x24"/>
 
         <item
-            android:id="@+id/nav_purchase"
-            android:title="@string/purchase"
-            android:icon="@drawable/purchase"/>
-
-        <item
             android:id="@+id/nav_stub"
             android:title="@string/stub"
             android:visible="false"/>
