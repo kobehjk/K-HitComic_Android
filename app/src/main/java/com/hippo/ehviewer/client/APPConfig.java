@@ -1,8 +1,5 @@
 package com.hippo.ehviewer.client;
 
-import com.hippo.ehviewer.client.data.Token;
-import com.hippo.ehviewer.client.data.UserInfo;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

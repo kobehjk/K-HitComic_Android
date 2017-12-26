@@ -38,7 +38,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,9 +55,6 @@ import com.hippo.ehviewer.client.EhUrlOpener;
 import com.hippo.ehviewer.client.EhUtils;
 import com.hippo.ehviewer.client.data.DateTools;
 import com.hippo.ehviewer.client.data.ListUrlBuilder;
-import com.hippo.ehviewer.client.data.Token;
-import com.hippo.ehviewer.client.data.UserDataOperation;
-import com.hippo.ehviewer.client.data.UserInfo;
 import com.hippo.ehviewer.ui.scene.AnalyticsScene;
 import com.hippo.ehviewer.ui.scene.BaseScene;
 import com.hippo.ehviewer.ui.scene.CookieSignInScene;
@@ -93,20 +89,15 @@ import com.hippo.widget.LoadImageView;
 import com.hippo.widget.ProgressView;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ResourcesUtils;
-import com.hippo.yorozuya.StringUtils;
 import com.hippo.yorozuya.ViewUtils;
 
-import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
 
-import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobConfig;
+
 
 public final class MainActivity extends StageActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -139,6 +130,7 @@ public final class MainActivity extends StageActivity
 
     static {
         APPConfig.isValible = false;
+        APPConfig.globalFreeTime = 0;
         registerLaunchMode(SecurityScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(WarningScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
         registerLaunchMode(AnalyticsScene.class, SceneFragment.LAUNCH_MODE_SINGLE_TASK);
@@ -230,22 +222,6 @@ public final class MainActivity extends StageActivity
         return announcer;
     }
 
-    private void initBmob(){
-        BmobConfig config =new BmobConfig.Builder(this)
-        //设置appkey
-        .setApplicationId(APPConfig.bmobApplicationId)
-        //请求超时时间（单位为秒）：默认15s
-        .setConnectTimeout(30)
-        //文件分片上传时每片的大小（单位字节），默认512*1024
-        .setUploadBlockSize(1024*1024)
-        //文件的过期时间(单位为秒)：默认1800s
-        .setFileExpiration(2500)
-        .build();
-        Bmob.initialize(config);
-
-    }
-
-
 
     private File saveImageToTempFile(UniFile file) {
         if (null == file) {
@@ -319,91 +295,6 @@ public final class MainActivity extends StageActivity
         return false;
     }
 
-    private void clickActivationCode(){
-        final CommonDialog kkbDialog = new CommonDialog(this, CommonDialog.DialogType.INPUT);
-        kkbDialog.bulider().setTitle("请输入正确的兑换码").setLeftButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!kkbDialog.getInputText().equals("")) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    UserDataOperation.instance().checkToken(kkbDialog.getInputText(), new UserDataOperation.CheckInterFace() {
-                        @Override
-                        public void checkCallBack(Token token) {
-
-                            if (token == null){
-                                //验证deviceID
-                                UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
-                                    @Override
-                                    public void checkCallBack(boolean isVip) {
-                                        Handler mainHandler = new Handler(Looper.getMainLooper());
-                                        mainHandler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                progressBar.setVisibility(View.INVISIBLE);
-                                                if (APPConfig.isExpire){
-                                                    mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
-                                                }else {
-                                                    mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
-                                                }
-
-                                            }
-                                        });
-                                    }
-                                });
-                            }else {
-                                if (token.getToken() == null){
-                                    APPConfig.localToken = null;
-                                    Settings.putString(Settings.TOKEN,"");
-                                    Handler mainHandler = new Handler(Looper.getMainLooper());
-                                    mainHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressBar.setVisibility(View.INVISIBLE);
-                                            mDisplayName.setText("未激活，免费次数:"+APPConfig.globalFreeTime);
-                                        }
-                                    });
-                                }else {
-                                    APPConfig.localToken = token.getToken();
-                                    Settings.putString(Settings.TOKEN,APPConfig.localToken);
-                                    APPConfig.startDate = DateTools.stringToDate(token.getStart_time());
-                                    APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
-                                    Handler mainHandler = new Handler(Looper.getMainLooper());
-                                    mainHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            progressBar.setVisibility(View.INVISIBLE);
-                                            if (APPConfig.isExpire){
-                                                mDisplayName.setText("激活码已过期，点击更换激活码");
-                                            }else {
-                                                mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
-                                            }
-
-                                        }
-                                    });
-
-                                }
-                            }
-
-
-                            kkbDialog.editClose();
-                        }
-                    });
-
-                }
-                UserDataOperation.instance().toast(MainActivity.this,kkbDialog.getInputText());
-//                ToastUtils.showShort(getContext(),kkbDialog.getInputText());
-                kkbDialog.editClose();
-            }
-        }).show();
-        kkbDialog.setRightButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                kkbDialog.editClose();
-            }
-
-        });
-    }
-
     @Override
     protected void onUnrecognizedIntent(@Nullable Intent intent) {
         Class<?> clazz = getTopSceneClass();
@@ -452,12 +343,6 @@ public final class MainActivity extends StageActivity
         View headerLayout = mNavView.getHeaderView(0);
         mAvatar = (LoadImageView) ViewUtils.$$(headerLayout, R.id.avatar);
         mDisplayName = (TextView) ViewUtils.$$(headerLayout, R.id.display_name);
-        mDisplayName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickActivationCode();
-            }
-        });
 
 
         mDrawerLayout.setStatusBarColor(ResourcesUtils.getAttrColor(this, R.attr.colorPrimaryDark));
@@ -508,123 +393,10 @@ public final class MainActivity extends StageActivity
 
     private void onInit() {
         // Check permission
-        if (PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE,
-                "赋予权限才可使用软件", PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)){
-            initBmobAndCheckID();
+        if (PermissionRequester.request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                getString(R.string.permissionTips), PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE)){
         }
 
-    }
-
-    private void initBmobAndCheckID(){
-        initBmob();
-
-        TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        String DEVICE_ID = tm.getDeviceId();
-        if (DEVICE_ID == null || DEVICE_ID.equals("")){
-            APPConfig.isValible = false;
-            APPConfig.globalFreeTime = 0;
-            UserDataOperation.instance().toast(this,"请到设置里开启软件全部权限方可使用");
-            return;
-        }
-
-        String olderDeviceIc = Settings.getString(Settings.DEVICEID,"");
-
-        if (StringUtils.equals(olderDeviceIc,"")){
-            APPConfig.deviceId = DEVICE_ID;
-            Settings.putString(Settings.DEVICEID,DEVICE_ID);
-        }else {
-            if (!StringUtils.equals(olderDeviceIc,DEVICE_ID)) {
-                APPConfig.isValible = false;
-                APPConfig.globalFreeTime = 0;
-            }else {
-                APPConfig.deviceId = DEVICE_ID;
-                Settings.putString(Settings.DEVICEID,DEVICE_ID);
-            }
-        }
-
-        String token = Settings.getString(Settings.TOKEN,"");
-        progressBar.setVisibility(View.VISIBLE);
-        if (StringUtils.equals(token,"")){
-            APPConfig.localToken = null;
-            UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
-                @Override
-                public void checkCallBack(boolean isVip) {
-                    Handler mainHandler = new Handler(Looper.getMainLooper());
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            if (APPConfig.isExpire){
-                                mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
-                            }else {
-                                mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
-                            }
-
-                        }
-                    });
-                }
-            });
-        }else {
-            UserDataOperation.instance().checkToken(token, new UserDataOperation.CheckInterFace() {
-                @Override
-                public void checkCallBack(Token token) {
-
-                    if (token == null){
-                        //验证deviceID
-                        UserDataOperation.instance().checkByDeviceId(APPConfig.deviceId, new UserDataOperation.CheckDeviceInterFace() {
-                            @Override
-                            public void checkCallBack(boolean isVip) {
-                                Handler mainHandler = new Handler(Looper.getMainLooper());
-                                mainHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        if (APPConfig.isExpire){
-                                            mDisplayName.setText("激活码未激活或已过期，点击更换激活码");
-                                        }else {
-                                            mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-                    }else {
-                        if (token.getToken() == null || token.getToken().equals("")){
-                            APPConfig.localToken = null;
-                            Settings.putString(Settings.TOKEN,"");
-                            Handler mainHandler = new Handler(Looper.getMainLooper());
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    mDisplayName.setText("未激活或已过期，免费次数:"+APPConfig.globalFreeTime);
-                                }
-                            });
-                        }else {
-                            APPConfig.localToken = token.getToken();
-                            Settings.putString(Settings.TOKEN,APPConfig.localToken);
-                            APPConfig.startDate = DateTools.stringToDate(token.getStart_time());
-                            APPConfig.endDate = DateTools.getEndDateBy(APPConfig.startDate,token.getAvailable_period());
-                            Handler mainHandler = new Handler(Looper.getMainLooper());
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    if (APPConfig.isExpire){
-                                        mDisplayName.setText("激活码已过期，点击更换激活码");
-                                    }else {
-                                        mDisplayName.setText("已激活，到期时间"+ DateTools.dateToString(APPConfig.endDate));
-                                    }
-
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-        }
     }
 
     private void onRestore(Bundle savedInstanceState) {
@@ -661,12 +433,6 @@ public final class MainActivity extends StageActivity
         if (requestCode == PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE || requestCode == PERMISSION_REQUEST_READ_PHONESTATE_STORAGE) {
             if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, R.string.you_rejected_me, Toast.LENGTH_SHORT).show();
-            }
-            if (grantResults.length == 1 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "您拒绝了我的请求，程序将退出", Toast.LENGTH_SHORT).show();
-
-            }else {
-                initBmobAndCheckID();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -854,24 +620,6 @@ public final class MainActivity extends StageActivity
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, REQUEST_CODE_SETTINGS);
-        } else if (id == R.id.nav_purchase) {
-            UserDataOperation.instance().checkAviailable(new UserDataOperation.CheckAvailable() {
-                @Override
-                public void isAvailable(boolean isavailable) {
-                    if (isavailable){
-                        Handler mainHandler = new Handler(Looper.getMainLooper());
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(MainActivity.this, PurchaseActivity.class);
-                                startActivityForResult(intent, REQUEST_CODE_SETTINGS);
-                            }
-                        });
-
-                    }
-                }
-            });
-
         }
 
         if (id != R.id.nav_stub && mDrawerLayout != null) {

@@ -22,7 +22,7 @@
     <!-- Category -->
 
     <string name="homepage">Hot</string>
-    <string name="whats_hot">High Definition</string>
+    <string name="whats_hot">HighDefinition</string>
     <string name="favourite">Sex</string>
     <string name="history">Fan</string>
     <string name="downloads">Eh</string>
@@ -623,5 +623,7 @@
     <string name="purchase_dialog">please purchase code to unlock rest</string>
     <string name="settings_about_warning">tips</string>
     <string name="enable_fingerprint">Also allow unlock with fingerprint</string>
+
+    <string name="permissionTips">We may need your storage permissions to better provide the use of the experience</string>
 
 </resources>
